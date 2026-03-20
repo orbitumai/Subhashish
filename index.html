@@ -3,879 +3,1048 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OrbitumAI — Framework Suite</title>
+<title>OrbitumAI — AI Consultant Portfolio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
 <style>
-/* ─── BRAND TOKENS ─────────────────────────────────────── */
+/* ─── TOKENS ────────────────────────────────────────────── */
 :root {
-  --orbit-black:   #0D0D0D;
-  --warm-ember:    #C4622D;
-  --strategy-gold: #D4A843;
-  --slate:         #3D4B5C;
-  --forest:        #2D6A4F;
-  --founder-white: #F7F5F2;
-  --soft-fog:      #E8E4DF;
-  --cream:         #FAF0E8;
-
-  /* ORBIT letter palette */
-  --o-color: #C4622D;
-  --r-color: #D4A843;
-  --b-color: #3D4B5C;
-  --i-color: #3D4B5C;
-  --t-color: #2D6A4F;
-
-  /* Typography */
+  --orbit-black:    #0D0D0D;
+  --warm-ember:     #C4622D;
+  --strategy-gold:  #D4A843;
+  --slate:          #3D4B5C;
+  --forest:         #2D6A4F;
+  --founder-white:  #F7F5F2;
+  --soft-fog:       #E8E4DF;
   --f-display: 'Plus Jakarta Sans', sans-serif;
   --f-body:    'Inter', sans-serif;
   --f-accent:  'Playfair Display', serif;
-
-  /* Radii */
-  --r-sm: 6px;
-  --r-md: 12px;
-  --r-lg: 20px;
-
-  /* Shadows */
-  --shadow-card: 0 4px 24px rgba(0,0,0,.18);
+  --r-sm: 6px; --r-md: 12px; --r-lg: 20px;
+  --shadow-card: 0 4px 24px rgba(0,0,0,.22);
 }
-
-/* ─── RESET ────────────────────────────────────────────── */
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; background:var(--orbit-black); }
+html, body { width:100%; height:100%; overflow:hidden; background:var(--orbit-black); font-family:var(--f-body); }
 
-/* ─── DECK ─────────────────────────────────────────────── */
-.deck { position:relative; width:100vw; height:100vh; }
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+.shell { display:flex; width:100vw; height:100vh; overflow:hidden; }
 
-/* ─── SLIDES ───────────────────────────────────────────── */
-.slide {
-  position:absolute; inset:0;
-  display:none; flex-direction:column;
-  padding:56px 72px 44px;
-  overflow:hidden;
+/* ─── SIDEBAR ────────────────────────────────────────────── */
+.sidebar {
+  width: 230px; flex-shrink:0;
+  background: #0a0a0a;
+  border-right: 1px solid rgba(247,245,242,.07);
+  display:flex; flex-direction:column;
+  padding: 32px 0 24px;
+  position:relative; z-index:10;
 }
-.slide.active { display:flex; }
-
-/* Backgrounds */
-.bg-black  { background: var(--orbit-black); }
-.bg-ember  { background: radial-gradient(ellipse at 20% 50%, #2a1208 0%, var(--orbit-black) 70%); }
-.bg-gold   { background: radial-gradient(ellipse at 80% 20%, #1f1600 0%, var(--orbit-black) 70%); }
-.bg-slate  { background: radial-gradient(ellipse at 50% 0%,  #0d1520 0%, var(--orbit-black) 70%); }
-.bg-forest { background: radial-gradient(ellipse at 0%  80%, #061008 0%, var(--orbit-black) 70%); }
-.bg-cream  { background: radial-gradient(ellipse at 100% 100%, #1a1000 0%, var(--orbit-black) 70%); }
-
-/* Subtle grid texture */
-.slide::before {
-  content:'';
-  position:absolute; inset:0; pointer-events:none;
-  background-image:
-    linear-gradient(rgba(247,245,242,.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(247,245,242,.025) 1px, transparent 1px);
-  background-size:48px 48px;
-  z-index:0;
+.sidebar-logo {
+  padding: 0 24px 28px;
+  border-bottom: 1px solid rgba(247,245,242,.06);
 }
-.slide > * { position:relative; z-index:1; }
-
-/* ─── TYPOGRAPHY ───────────────────────────────────────── */
-.eyebrow {
+.sidebar-logo .name {
   font-family: var(--f-display);
-  font-size: 11px; font-weight:700;
-  letter-spacing: 3.5px; text-transform:uppercase;
+  font-size: 15px; font-weight:800;
   color: var(--warm-ember);
-  margin-bottom:14px;
+  letter-spacing:.5px;
 }
-.hero-title {
-  font-family: var(--f-display);
-  font-size: clamp(60px, 8vw, 100px);
-  font-weight:800; line-height:1;
-  color: var(--founder-white);
-  letter-spacing:-2px;
-}
-.slide-title {
-  font-family: var(--f-display);
-  font-size: clamp(26px, 3.2vw, 42px);
-  font-weight:800; line-height:1.1;
-  color: var(--founder-white);
-  margin-bottom:8px;
-}
-.slide-sub {
+.sidebar-logo .tag {
   font-family: var(--f-accent);
   font-style:italic;
-  font-size: clamp(14px, 1.6vw, 20px);
-  color: var(--strategy-gold);
-  margin-bottom:28px;
+  font-size: 11px;
+  color: rgba(247,245,242,.35);
+  margin-top:3px;
 }
-.body {
-  font-family: var(--f-body);
-  font-size: clamp(13px, 1.3vw, 16px);
-  color: var(--soft-fog);
-  line-height:1.75;
-  max-width:780px;
-}
-.tagline {
-  font-family: var(--f-accent);
-  font-style:italic;
-  font-size: clamp(15px, 1.5vw, 19px);
-  color: var(--strategy-gold);
-  margin-top:20px;
-}
-.spacer { flex:1; }
-
-/* ─── BRAND FOOTER ─────────────────────────────────────── */
-.brand-footer {
-  margin-top:auto;
-  padding-top:20px;
-  border-top:1px solid rgba(247,245,242,.07);
-  display:flex; align-items:center; justify-content:space-between;
-}
-.brand-footer .logo {
+.nav-group { padding: 20px 0 0; flex:1; }
+.nav-label {
   font-family: var(--f-display);
-  font-size:13px; font-weight:800;
-  color: var(--warm-ember);
-  letter-spacing:1px;
+  font-size: 9px; font-weight:700;
+  letter-spacing:2.5px; text-transform:uppercase;
+  color: rgba(247,245,242,.2);
+  padding: 0 24px 10px;
 }
-.brand-footer .url {
-  font-family: var(--f-body);
-  font-size:11px;
-  color: rgba(247,245,242,.3);
-  letter-spacing:1px;
-}
-
-/* ─── ORBIT LOOP ───────────────────────────────────────── */
-.orbit-loop {
-  display:flex; gap:12px; margin-top:28px;
-  align-items:stretch;
-}
-.orbit-step {
-  flex:1;
-  background: rgba(247,245,242,.04);
-  border:1px solid rgba(247,245,242,.07);
-  border-radius: var(--r-md);
-  padding:20px 16px;
-  display:flex; flex-direction:column; gap:8px;
-  transition: transform .2s;
-}
-.orbit-step:hover { transform:translateY(-3px); }
-.step-letter {
+.nav-item {
+  display:flex; align-items:center; gap:12px;
+  padding: 11px 24px;
+  cursor:pointer;
   font-family: var(--f-display);
-  font-size:36px; font-weight:800;
-  line-height:1;
-}
-.step-word {
-  font-family: var(--f-display);
-  font-size:12px; font-weight:700;
-  letter-spacing:2px; text-transform:uppercase;
-  color: rgba(247,245,242,.5);
-}
-.step-desc {
-  font-family: var(--f-body);
-  font-size:12px;
-  color: rgba(247,245,242,.55);
-  line-height:1.5;
-  margin-top:4px;
-  flex:1;
-}
-
-/* ─── PITCH-XI LAYERS ──────────────────────────────────── */
-.pitch-grid {
-  display:grid;
-  grid-template-columns: repeat(7,1fr);
-  gap:10px;
-  margin-top:28px;
-}
-.pitch-layer {
-  background: rgba(247,245,242,.04);
-  border:1px solid rgba(247,245,242,.07);
-  border-radius: var(--r-md);
-  padding:18px 10px;
-  text-align:center;
-}
-.pitch-letter {
-  font-family: var(--f-display);
-  font-size:30px; font-weight:800;
-  color: var(--warm-ember);
-  line-height:1;
-}
-.pitch-label {
-  font-family: var(--f-display);
-  font-size:10px; font-weight:700;
-  letter-spacing:1.5px; text-transform:uppercase;
-  color: rgba(247,245,242,.55);
-  margin:6px 0 4px;
-}
-.pitch-desc {
-  font-family: var(--f-body);
-  font-size:11px;
+  font-size: 13px; font-weight:600;
   color: rgba(247,245,242,.45);
-  line-height:1.4;
+  border-left: 3px solid transparent;
+  transition: all .18s ease;
+  user-select:none;
 }
-.pitch-xi .pitch-letter { color: var(--strategy-gold); }
+.nav-item:hover { color: rgba(247,245,242,.75); background: rgba(247,245,242,.03); }
+.nav-item.active { color: var(--founder-white); border-left-color: var(--warm-ember); background: rgba(196,98,45,.07); }
+.nav-item .icon { font-size:15px; width:18px; text-align:center; }
+.nav-divider { height:1px; background:rgba(247,245,242,.05); margin:14px 24px; }
 
-/* ─── ORBIT REPORT ─────────────────────────────────────── */
-.report-card {
-  background: rgba(247,245,242,.03);
-  border:1px solid rgba(196,98,45,.25);
-  border-radius: var(--r-lg);
-  padding:28px 32px;
-  margin-top:20px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0;
-}
-.report-row {
-  display:flex;
-  align-items:flex-start;
-  gap:16px;
-  padding:14px 16px;
-  border-bottom:1px solid rgba(247,245,242,.05);
-}
-.report-row:nth-child(odd) { background:rgba(247,245,242,.02); }
-.report-row:last-child { border-bottom:none; }
-.report-card.single-col .report-row { grid-column:1/-1; }
-.report-letter-badge {
-  min-width:36px; height:36px;
-  border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  font-family: var(--f-display);
-  font-size:16px; font-weight:800;
-  flex-shrink:0;
-}
-.report-content {}
-.report-label {
-  font-family: var(--f-display);
-  font-size:10px; font-weight:700;
-  letter-spacing:2px; text-transform:uppercase;
-  color: rgba(247,245,242,.4);
-  margin-bottom:3px;
-}
-.report-value {
-  font-family: var(--f-body);
-  font-size:13px;
-  color: var(--founder-white);
-  line-height:1.5;
-}
-.report-value strong { color: var(--warm-ember); }
-
-/* ─── STATUS PILL ──────────────────────────────────────── */
-.status-pill {
-  display:inline-flex; align-items:center; gap:6px;
-  padding:4px 14px;
-  border-radius:20px;
-  font-family: var(--f-display);
-  font-size:11px; font-weight:700;
-  letter-spacing:1.5px; text-transform:uppercase;
-}
-.pill-live    { background:rgba(45,106,79,.25); color:#6DCF8A; border:1px solid rgba(45,106,79,.4); }
-.pill-dev     { background:rgba(212,168,67,.15); color:var(--strategy-gold); border:1px solid rgba(212,168,67,.3); }
-.dot-live { width:6px;height:6px;border-radius:50%;background:#6DCF8A; }
-.dot-dev  { width:6px;height:6px;border-radius:50%;background:var(--strategy-gold); }
-
-/* ─── FRAMEWORK CARDS (slide 6) ────────────────────────── */
-.fw-grid {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-  margin-top:24px;
-}
-.fw-card {
-  background: rgba(247,245,242,.035);
-  border:1px solid rgba(247,245,242,.07);
-  border-radius: var(--r-lg);
-  padding:24px 28px;
+.sidebar-links {
+  padding: 16px 24px 0;
+  border-top: 1px solid rgba(247,245,242,.06);
   display:flex; flex-direction:column; gap:10px;
 }
-.fw-card-top { display:flex; align-items:center; justify-content:space-between; }
-.fw-name {
+.ext-link {
+  display:flex; align-items:center; gap:8px;
   font-family: var(--f-display);
-  font-size:22px; font-weight:800;
-  color: var(--founder-white);
+  font-size: 11px; font-weight:600;
+  color: rgba(247,245,242,.35);
+  text-decoration:none;
+  transition: color .15s;
+  cursor:pointer;
 }
-.fw-tagline {
+.ext-link:hover { color: var(--strategy-gold); }
+.ext-link .dot { width:5px; height:5px; border-radius:50%; background:var(--strategy-gold); flex-shrink:0; }
+
+/* ─── MAIN PANEL ─────────────────────────────────────────── */
+.main {
+  flex:1; overflow-y:auto; overflow-x:hidden;
+  background: var(--orbit-black);
+  position:relative;
+}
+.main::-webkit-scrollbar { width:4px; }
+.main::-webkit-scrollbar-track { background:transparent; }
+.main::-webkit-scrollbar-thumb { background:rgba(247,245,242,.1); border-radius:4px; }
+
+/* Grid texture */
+.main::before {
+  content:'';
+  position:fixed; inset:0; pointer-events:none;
+  background-image:
+    linear-gradient(rgba(247,245,242,.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247,245,242,.018) 1px, transparent 1px);
+  background-size:52px 52px; z-index:0;
+}
+
+/* ─── PANELS ─────────────────────────────────────────────── */
+.panel { display:none; padding:52px 60px 60px; position:relative; z-index:1; min-height:100%; animation: fadeIn .25s ease; }
+.panel.active { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ─── PANEL HEADER ───────────────────────────────────────── */
+.panel-eyebrow {
+  font-family: var(--f-display);
+  font-size: 10px; font-weight:700;
+  letter-spacing:3px; text-transform:uppercase;
+  color: var(--warm-ember); margin-bottom:10px;
+}
+.panel-title {
+  font-family: var(--f-display);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight:800; line-height:1.05;
+  color: var(--founder-white);
+  letter-spacing:-1px; margin-bottom:6px;
+}
+.panel-sub {
   font-family: var(--f-accent);
   font-style:italic;
-  font-size:13px;
+  font-size: clamp(14px, 1.5vw, 18px);
   color: var(--strategy-gold);
+  margin-bottom:36px;
 }
-.fw-body {
-  font-family: var(--f-body);
-  font-size:13px;
-  color: rgba(247,245,242,.6);
-  line-height:1.65;
-}
-
-/* ─── DEV BADGE ────────────────────────────────────────── */
-.dev-block {
-  background: rgba(212,168,67,.06);
-  border:1px solid rgba(212,168,67,.18);
-  border-radius: var(--r-md);
-  padding:16px 20px;
-  margin-top:12px;
-  font-family: var(--f-body);
-  font-size:12px;
-  color: rgba(212,168,67,.75);
-  line-height:1.5;
-}
-
-/* ─── TWO-COL LAYOUT ───────────────────────────────────── */
-.two-col { display:grid; grid-template-columns:1fr 1fr; gap:36px; align-items:start; margin-top:20px; }
-.col-label {
-  font-family: var(--f-display);
-  font-size:10px; font-weight:700;
-  letter-spacing:2px; text-transform:uppercase;
-  color: var(--warm-ember);
-  margin-bottom:14px;
-}
-.list-item {
-  display:flex; gap:12px; align-items:flex-start;
-  margin-bottom:12px;
-}
-.list-dot {
-  min-width:6px; height:6px;
-  border-radius:50%;
-  background: var(--warm-ember);
-  margin-top:7px; flex-shrink:0;
-}
-.list-body {
-  font-family: var(--f-body);
-  font-size:13px;
-  color: rgba(247,245,242,.65);
-  line-height:1.6;
-}
-.list-body strong { color: var(--founder-white); font-weight:600; }
-
-/* ─── QUOTE PULL ───────────────────────────────────────── */
-.pull-quote {
-  border-left:3px solid var(--warm-ember);
-  padding:16px 24px;
-  margin:20px 0;
-  background: rgba(196,98,45,.07);
-  border-radius:0 var(--r-md) var(--r-md) 0;
-}
-.pull-quote p {
-  font-family: var(--f-accent);
-  font-style:italic;
-  font-size:clamp(15px,1.6vw,19px);
-  color: var(--founder-white);
-  line-height:1.55;
-}
-.pull-quote cite {
-  display:block;
-  font-family: var(--f-body);
-  font-size:12px;
-  color: var(--warm-ember);
-  margin-top:8px;
-  font-style:normal;
-  font-weight:600;
-}
-
-/* ─── NAV ──────────────────────────────────────────────── */
-.nav {
-  position:fixed; bottom:32px; left:50%; transform:translateX(-50%);
-  display:flex; align-items:center; gap:14px;
-  background: rgba(13,13,13,.92);
-  border:1px solid rgba(247,245,242,.09);
-  border-radius:50px;
-  padding:10px 22px;
-  backdrop-filter:blur(16px);
-  z-index:200;
-  box-shadow: var(--shadow-card);
-}
-.nav-btn {
-  width:36px; height:36px; border-radius:50%;
-  background:rgba(196,98,45,.15);
-  border:1px solid rgba(196,98,45,.3);
-  color:var(--warm-ember);
-  font-size:15px; cursor:pointer;
-  display:flex; align-items:center; justify-content:center;
-  transition:all .18s; font-family:var(--f-display); font-weight:700;
-}
-.nav-btn:hover { background:var(--warm-ember); color:var(--founder-white); }
-.nav-dots { display:flex; gap:7px; align-items:center; }
-.ndot {
-  width:7px; height:7px; border-radius:50%;
-  background:rgba(247,245,242,.18);
-  cursor:pointer; transition:all .18s;
-}
-.ndot.active { background:var(--warm-ember); width:22px; border-radius:4px; }
-.nav-label {
-  font-family:var(--f-display);
-  font-size:12px; font-weight:600;
-  color:rgba(247,245,242,.35);
-  min-width:44px; text-align:center;
-}
-
-/* ─── SLIDE NUMBER ─────────────────────────────────────── */
-.slide-num {
-  position:fixed; top:24px; right:36px;
-  font-family:var(--f-display); font-size:11px; font-weight:700;
-  letter-spacing:2px; color:rgba(247,245,242,.2);
-  z-index:200;
-}
-.brand-mark {
-  position:fixed; top:24px; left:36px;
-  font-family:var(--f-display); font-size:14px; font-weight:800;
-  color:var(--warm-ember); letter-spacing:.5px;
-  z-index:200;
-}
-
-/* ─── ACCENT LINE ──────────────────────────────────────── */
 .accent-line {
   width:48px; height:3px;
-  background:var(--warm-ember);
-  border-radius:2px;
-  margin:16px 0 24px;
+  background: var(--warm-ember);
+  border-radius:2px; margin-bottom:32px;
 }
 
+/* ─── FRAMEWORK CARDS ────────────────────────────────────── */
+.fw-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.fw-card {
+  background: rgba(247,245,242,.03);
+  border: 1px solid rgba(247,245,242,.08);
+  border-radius: var(--r-lg);
+  padding: 28px 28px 24px;
+  display:flex; flex-direction:column; gap:12px;
+  transition: transform .2s, border-color .2s;
+}
+.fw-card:hover { transform:translateY(-3px); border-color:rgba(196,98,45,.3); }
+.fw-card.live { border-color: rgba(45,106,79,.25); }
+.fw-card.dev  { border-color: rgba(212,168,67,.15); opacity:.82; }
+.fw-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+.fw-num { font-family:var(--f-display); font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(247,245,242,.3); margin-bottom:5px; }
+.fw-name { font-family:var(--f-display); font-size:24px; font-weight:800; color:var(--founder-white); }
+.status-pill { display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:20px; font-family:var(--f-display); font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; white-space:nowrap; flex-shrink:0; }
+.pill-live { background:rgba(45,106,79,.2); color:#6DCF8A; border:1px solid rgba(45,106,79,.35); }
+.pill-dev  { background:rgba(212,168,67,.12); color:var(--strategy-gold); border:1px solid rgba(212,168,67,.25); }
+.dot-live { width:5px;height:5px;border-radius:50%;background:#6DCF8A; }
+.dot-dev  { width:5px;height:5px;border-radius:50%;background:var(--strategy-gold); }
+.fw-tagline { font-family:var(--f-accent); font-style:italic; font-size:13px; color:var(--strategy-gold); }
+.fw-desc { font-family:var(--f-body); font-size:13px; color:rgba(247,245,242,.58); line-height:1.7; }
+.fw-steps { display:flex; flex-direction:column; gap:7px; margin-top:4px; }
+.fw-step { display:flex; align-items:flex-start; gap:10px; font-family:var(--f-body); font-size:12px; color:rgba(247,245,242,.5); line-height:1.5; }
+.fw-step strong { color:var(--founder-white); font-weight:600; }
+.fw-step-dot { min-width:5px; height:5px; border-radius:50%; background:var(--warm-ember); margin-top:5px; }
+.dev-note { background:rgba(212,168,67,.06); border:1px solid rgba(212,168,67,.15); border-radius:var(--r-md); padding:12px 16px; font-family:var(--f-body); font-size:11px; color:rgba(212,168,67,.7); line-height:1.5; margin-top:4px; }
+
+/* ─── Q&A ────────────────────────────────────────────────── */
+.qa-section { margin-bottom:40px; }
+.qa-section-title {
+  font-family:var(--f-display); font-size:10px; font-weight:700;
+  letter-spacing:2.5px; text-transform:uppercase;
+  color:var(--warm-ember); margin-bottom:16px;
+  padding-bottom:10px; border-bottom:1px solid rgba(196,98,45,.2);
+}
+.qa-item { margin-bottom:20px; }
+.qa-q {
+  font-family:var(--f-display); font-size:13px; font-weight:700;
+  color:var(--strategy-gold); margin-bottom:7px;
+  display:flex; gap:10px; align-items:flex-start;
+}
+.qa-q-num { color:rgba(212,168,67,.4); font-weight:600; min-width:20px; }
+.qa-a {
+  font-family:var(--f-body); font-size:13px; line-height:1.75;
+  color:rgba(247,245,242,.65);
+  padding-left:30px;
+}
+
+/* ─── ARCH CARDS ─────────────────────────────────────────── */
+.arch-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.arch-card {
+  background: rgba(247,245,242,.025);
+  border:1px solid rgba(247,245,242,.08);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+}
+.arch-card-header {
+  padding:20px 24px 16px;
+  border-bottom:1px solid rgba(247,245,242,.06);
+}
+.arch-card-tag { font-family:var(--f-display); font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--warm-ember); margin-bottom:6px; }
+.arch-card-title { font-family:var(--f-display); font-size:18px; font-weight:800; color:var(--founder-white); margin-bottom:4px; }
+.arch-card-sub { font-family:var(--f-accent); font-style:italic; font-size:12px; color:var(--strategy-gold); }
+.arch-card-body { padding:20px 24px; display:flex; flex-direction:column; gap:14px; }
+.arch-layer {
+  display:flex; align-items:flex-start; gap:14px;
+}
+.arch-layer-icon {
+  width:32px; height:32px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; flex-shrink:0;
+}
+.arch-layer-info {}
+.arch-layer-name { font-family:var(--f-display); font-size:12px; font-weight:700; color:var(--founder-white); margin-bottom:2px; }
+.arch-layer-desc { font-family:var(--f-body); font-size:11px; color:rgba(247,245,242,.5); line-height:1.5; }
+.arch-flow {
+  background:rgba(13,13,13,.6); border:1px solid rgba(247,245,242,.07);
+  border-radius:var(--r-md); padding:14px 16px; margin-top:4px;
+}
+.arch-flow-title { font-family:var(--f-display); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:rgba(247,245,242,.3); margin-bottom:10px; }
+.flow-step { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.flow-step:last-child { margin-bottom:0; }
+.flow-step-num { width:18px; height:18px; border-radius:50%; background:rgba(196,98,45,.2); border:1px solid rgba(196,98,45,.3); display:flex; align-items:center; justify-content:center; font-family:var(--f-display); font-size:9px; font-weight:700; color:var(--warm-ember); flex-shrink:0; }
+.flow-step-text { font-family:var(--f-body); font-size:11px; color:rgba(247,245,242,.55); }
+.flow-arrow { font-size:10px; color:rgba(247,245,242,.2); margin:0 0 6px 8px; }
+.tech-pills { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.tech-pill { padding:3px 10px; border-radius:20px; font-family:var(--f-display); font-size:10px; font-weight:600; background:rgba(247,245,242,.06); border:1px solid rgba(247,245,242,.1); color:rgba(247,245,242,.6); }
+
+/* ─── HOSTING SECTION ────────────────────────────────────── */
+.hosting-intro { font-family:var(--f-body); font-size:14px; color:rgba(247,245,242,.6); line-height:1.75; max-width:720px; margin-bottom:32px; }
+.hosting-grid { display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:32px; }
+.host-card {
+  background:rgba(247,245,242,.03);
+  border:1px solid rgba(247,245,242,.08);
+  border-radius:var(--r-lg);
+  padding:24px;
+  transition: border-color .2s;
+}
+.host-card:hover { border-color:rgba(196,98,45,.3); }
+.host-card-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+.host-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.host-name { font-family:var(--f-display); font-size:15px; font-weight:800; color:var(--founder-white); }
+.host-category { font-family:var(--f-body); font-size:11px; color:rgba(247,245,242,.35); margin-top:1px; }
+.host-desc { font-family:var(--f-body); font-size:13px; color:rgba(247,245,242,.55); line-height:1.65; margin-bottom:12px; }
+.host-details { display:flex; flex-direction:column; gap:6px; }
+.host-detail { display:flex; gap:8px; align-items:flex-start; font-family:var(--f-body); font-size:12px; color:rgba(247,245,242,.45); }
+.host-detail-dot { min-width:5px; height:5px; border-radius:50%; background:var(--warm-ember); margin-top:4px; }
+
+.stack-diagram {
+  background:rgba(13,13,13,.8);
+  border:1px solid rgba(196,98,45,.2);
+  border-radius:var(--r-lg);
+  padding:28px 32px;
+  margin-bottom:24px;
+}
+.stack-title { font-family:var(--f-display); font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(247,245,242,.3); margin-bottom:20px; }
+.stack-row { display:flex; align-items:stretch; gap:0; margin-bottom:4px; }
+.stack-layer-label { width:130px; flex-shrink:0; font-family:var(--f-display); font-size:11px; font-weight:700; color:rgba(247,245,242,.3); display:flex; align-items:center; }
+.stack-layer-box {
+  flex:1; border-radius:var(--r-sm);
+  padding:10px 16px;
+  font-family:var(--f-body); font-size:12px; line-height:1.5;
+  display:flex; align-items:center;
+}
+.stack-arrow { width:130px; flex-shrink:0; display:flex; align-items:center; padding-left:6px; font-size:16px; color:rgba(247,245,242,.15); }
+.s-internet { background:rgba(196,98,45,.1); border:1px solid rgba(196,98,45,.2); color:rgba(247,245,242,.7); }
+.s-proxy    { background:rgba(61,75,92,.15); border:1px solid rgba(61,75,92,.3); color:rgba(247,245,242,.7); }
+.s-docker   { background:rgba(45,106,79,.1); border:1px solid rgba(45,106,79,.25); color:rgba(247,245,242,.7); }
+.s-app      { background:rgba(212,168,67,.08); border:1px solid rgba(212,168,67,.18); color:rgba(247,245,242,.7); }
+
+/* ─── LINKEDIN PANEL ─────────────────────────────────────── */
+.li-hero {
+  background: rgba(247,245,242,.03);
+  border:1px solid rgba(247,245,242,.08);
+  border-radius:var(--r-lg);
+  padding:36px 40px;
+  margin-bottom:28px;
+  display:flex; align-items:flex-start; gap:28px;
+}
+.li-icon { font-size:48px; flex-shrink:0; }
+.li-content {}
+.li-eyebrow { font-family:var(--f-display); font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--warm-ember); margin-bottom:8px; }
+.li-title { font-family:var(--f-display); font-size:22px; font-weight:800; color:var(--founder-white); margin-bottom:8px; line-height:1.2; }
+.li-desc { font-family:var(--f-body); font-size:14px; color:rgba(247,245,242,.6); line-height:1.7; margin-bottom:20px; }
+.li-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(196,98,45,.15); border:1px solid rgba(196,98,45,.4);
+  color:var(--founder-white); font-family:var(--f-display); font-size:13px; font-weight:700;
+  padding:12px 24px; border-radius:var(--r-md);
+  text-decoration:none; cursor:pointer; transition: all .18s;
+}
+.li-btn:hover { background:rgba(196,98,45,.28); transform:translateY(-1px); }
+
+.li-cards { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
+.li-card {
+  background:rgba(247,245,242,.025); border:1px solid rgba(247,245,242,.07);
+  border-radius:var(--r-md); padding:20px;
+}
+.li-card-icon { font-size:22px; margin-bottom:10px; }
+.li-card-title { font-family:var(--f-display); font-size:13px; font-weight:700; color:var(--founder-white); margin-bottom:6px; }
+.li-card-body { font-family:var(--f-body); font-size:12px; color:rgba(247,245,242,.5); line-height:1.6; }
+
+/* ─── HERO PANEL ─────────────────────────────────────────── */
+.hero-panel { display:flex; flex-direction:column; justify-content:center; min-height:calc(100vh - 0px); padding:52px 60px; position:relative; z-index:1; }
+.hero-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(196,98,45,.1); border:1px solid rgba(196,98,45,.25); border-radius:20px; padding:6px 16px; font-family:var(--f-display); font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--warm-ember); margin-bottom:24px; width:fit-content; }
+.hero-badge-dot { width:6px; height:6px; border-radius:50%; background:#6DCF8A; animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.4;} }
+.hero-title { font-family:var(--f-display); font-size:clamp(42px,5.5vw,72px); font-weight:800; color:var(--founder-white); line-height:1.0; letter-spacing:-2px; margin-bottom:12px; }
+.hero-title span { color:var(--warm-ember); }
+.hero-sub { font-family:var(--f-accent); font-style:italic; font-size:clamp(16px,1.8vw,22px); color:var(--strategy-gold); margin-bottom:28px; }
+.hero-desc { font-family:var(--f-body); font-size:15px; color:rgba(247,245,242,.55); line-height:1.8; max-width:600px; margin-bottom:40px; }
+.hero-stats { display:flex; gap:36px; }
+.hero-stat {}
+.hero-stat-num { font-family:var(--f-display); font-size:28px; font-weight:800; color:var(--founder-white); line-height:1; }
+.hero-stat-lbl { font-family:var(--f-body); font-size:11px; color:rgba(247,245,242,.35); margin-top:4px; }
+.hero-ctas { display:flex; gap:12px; margin-bottom:40px; }
+.btn-primary { display:inline-flex; align-items:center; gap:8px; background:var(--warm-ember); color:var(--founder-white); font-family:var(--f-display); font-size:13px; font-weight:700; padding:12px 22px; border-radius:var(--r-md); text-decoration:none; cursor:pointer; border:none; transition:all .18s; }
+.btn-primary:hover { background:#b5571f; transform:translateY(-1px); }
+.btn-ghost { display:inline-flex; align-items:center; gap:8px; background:transparent; color:rgba(247,245,242,.6); font-family:var(--f-display); font-size:13px; font-weight:600; padding:12px 22px; border-radius:var(--r-md); border:1px solid rgba(247,245,242,.12); text-decoration:none; cursor:pointer; transition:all .18s; }
+.btn-ghost:hover { border-color:rgba(247,245,242,.28); color:var(--founder-white); }
 </style>
 </head>
 <body>
+<div class="shell">
 
-<div class="brand-mark">OrbitumAI</div>
-<div class="slide-num" id="slideNum">01 / 06</div>
-
-<div class="deck" id="deck">
-
-  <!-- ══════════════════════════════════════════════════════
-       SLIDE 1 — COVER (Gamma-matched layout)
-  ══════════════════════════════════════════════════════ -->
-  <div class="slide bg-black active" style="justify-content:space-between;">
-
-    <!-- Top badge -->
-    <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(196,98,45,.12);border:1px solid rgba(196,98,45,.3);border-radius:20px;padding:6px 16px;width:fit-content;">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#C4622D" stroke-width="1.5"/><circle cx="7" cy="7" r="2.5" fill="#C4622D"/></svg>
-      <span style="font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--warm-ember);">OrbitumAI</span>
+  <!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="name">OrbitumAI</div>
+      <div class="tag">Subhashish Chowdhury</div>
     </div>
 
-    <!-- Hero headline -->
-    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:12px 0;">
-      <h1 style="font-family:var(--f-display);font-size:clamp(34px,5vw,64px);font-weight:800;line-height:1.08;color:var(--founder-white);max-width:900px;letter-spacing:-1.5px;">
-        Your Business Deserves an<br>
-        <span style="color:var(--warm-ember);">AI Strategy.</span> Not an AI Tool.
-      </h1>
-
-      <p style="font-family:var(--f-body);font-size:clamp(13px,1.4vw,16px);color:rgba(247,245,242,.65);line-height:1.7;max-width:820px;margin-top:20px;">
-        <span style="color:var(--warm-ember);font-weight:600;">ORBIT is the business framework that connects every AI initiative to a measurable revenue outcome</span>
-        &nbsp;— built for founders and executives who need results, not experiments.
-      </p>
-
-      <!-- Four framework cards -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:32px;border-radius:var(--r-md);overflow:hidden;border:1px solid rgba(196,98,45,.25);">
-        <div style="background:rgba(196,98,45,.18);padding:18px 20px;border-right:1px solid rgba(196,98,45,.2);">
-          <div style="font-family:var(--f-display);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--founder-white);margin-bottom:4px;">ORBIT</div>
-          <div style="font-family:var(--f-body);font-size:13px;color:rgba(247,245,242,.75);">Strategy</div>
-        </div>
-        <div style="background:rgba(196,98,45,.13);padding:18px 20px;border-right:1px solid rgba(196,98,45,.18);">
-          <div style="font-family:var(--f-display);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--founder-white);margin-bottom:4px;">PITCH-XI</div>
-          <div style="font-family:var(--f-body);font-size:13px;color:rgba(247,245,242,.75);">Alignment</div>
-        </div>
-        <div style="background:rgba(196,98,45,.08);padding:18px 20px;border-right:1px solid rgba(196,98,45,.12);">
-          <div style="font-family:var(--f-display);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--founder-white);margin-bottom:4px;">FORCE</div>
-          <div style="font-family:var(--f-body);font-size:13px;color:rgba(247,245,242,.75);">Transformation</div>
-        </div>
-        <div style="background:rgba(196,98,45,.04);padding:18px 20px;">
-          <div style="font-family:var(--f-display);font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--founder-white);margin-bottom:4px;">BUILD</div>
-          <div style="font-family:var(--f-body);font-size:13px;color:rgba(247,245,242,.75);">Execution</div>
-        </div>
+    <nav class="nav-group">
+      <div class="nav-label">Navigation</div>
+      <div class="nav-item active" onclick="show('home')">
+        <span class="icon">⬡</span> Overview
       </div>
+      <div class="nav-item" onclick="show('frameworks')">
+        <span class="icon">◈</span> Frameworks
+      </div>
+      <div class="nav-item" onclick="show('qa')">
+        <span class="icon">◎</span> Interview Q&amp;A
+      </div>
+      <div class="nav-item" onclick="show('arch')">
+        <span class="icon">◫</span> Product Builds
+      </div>
+      <div class="nav-item" onclick="show('hosting')">
+        <span class="icon">◉</span> Infrastructure
+      </div>
+      <div class="nav-divider"></div>
+      <div class="nav-item" onclick="show('linkedin')">
+        <span class="icon">◈</span> LinkedIn Post
+      </div>
+    </nav>
 
-      <p style="font-family:var(--f-body);font-size:12px;color:rgba(247,245,242,.3);margin-top:14px;letter-spacing:.5px;">
-        Four frameworks. One operating system. Every stage of your AI journey.
-      </p>
+    <div class="sidebar-links">
+      <a class="ext-link" href="https://orbitumai.com" target="_blank"><span class="dot"></span>orbitumai.com ↗</a>
+      <a class="ext-link" href="https://www.linkedin.com/in/shuv/" target="_blank"><span class="dot"></span>LinkedIn Profile ↗</a>
+      <a class="ext-link" href="https://www.linkedin.com/posts/shuv_aileadcalling-an-ai-powered-voice-agent-activity-7431850032406089728-7pyt?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAD8s-QBJLeXJBRRnNazn6Gsj9pHJ6PTxLA" target="_blank"><span class="dot"></span>LinkedIn Post ↗</a>
     </div>
+  </aside>
 
-    <!-- Footer -->
-    <div style="border-top:1px solid rgba(247,245,242,.07);padding-top:18px;display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-family:var(--f-accent);font-style:italic;font-size:13px;color:rgba(247,245,242,.4);">
-        Shuv Chowdhury &nbsp;·&nbsp; Founder, OrbitumAI &nbsp;·&nbsp; <span style="color:var(--warm-ember);">orbitumai.com</span>
+  <!-- ═══ MAIN ════════════════════════════════════════════════ -->
+  <main class="main">
+
+    <!-- ── HOME ─────────────────────────────────────────────── -->
+    <div id="panel-home" class="panel hero-panel active">
+      <div class="hero-badge"><span class="hero-badge-dot"></span>Available · Dallas, TX</div>
+      <div class="hero-title">AI Consultant<br><span>&amp; No-Code</span><br>Builder</div>
+      
+      <div class="hero-desc">I build AI-powered products, workflows, and automations — without writing traditional code. From enterprise voice agents to multi-tenant SaaS platforms, everything runs on prompt engineering, n8n, and smart orchestration.</div>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="show('frameworks')">See Frameworks →</button>
+        <button class="btn-ghost" onclick="show('qa')">Interview Answers</button>
       </div>
-      <div style="background:var(--warm-ember);color:var(--founder-white);font-family:var(--f-display);font-size:12px;font-weight:700;padding:10px 22px;border-radius:var(--r-sm);letter-spacing:.5px;cursor:pointer;">
-        https://www.orbitumai.com/ — Sign Up to Know More
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num">4</div><div class="hero-stat-lbl">Frameworks Built</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">2</div><div class="hero-stat-lbl">SaaS Products</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">18</div><div class="hero-stat-lbl">Q&amp;A Answered</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">5+</div><div class="hero-stat-lbl">Apps Self-Hosted</div></div>
       </div>
     </div>
 
-  </div>
+    <!-- ── FRAMEWORKS ────────────────────────────────────────── -->
+    <div id="panel-frameworks" class="panel">
+      <div class="panel-eyebrow">OrbitumAI IP</div>
+      <div class="panel-title">Frameworks</div>
+      <div class="panel-sub">Four proprietary methodologies for structured AI adoption</div>
+      <div class="accent-line"></div>
 
-  <!-- ══════════════════════════════════════════════════════
-       SLIDE 2 — ORBIT FRAMEWORK
-  ══════════════════════════════════════════════════════ -->
-  <div class="slide bg-black">
+      <div class="fw-grid">
 
-    <div class="eyebrow">Framework 01 &nbsp;·&nbsp; Live</div>
-    <div class="slide-title">ORBIT™ &nbsp;<span style="font-size:.55em;font-weight:600;color:rgba(247,245,242,.4);letter-spacing:0;">The Business AI Operating Framework</span></div>
-    <div class="accent-line" style="margin:10px 0 16px;"></div>
-
-    <p class="body" style="max-width:860px;">
-      ORBIT is a five-step thinking system that helps business leaders apply AI to real business outcomes. Instead of starting with tools or prompts, ORBIT starts with strategy — defining what the business actually needs first, then determining how AI can help deliver it.
-    </p>
-
-    <div class="orbit-loop">
-      <div class="orbit-step">
-        <div class="step-letter" style="color:var(--o-color);">O</div>
-        <div class="step-word">Outcome</div>
-        <div class="step-desc">Defines the specific 90-day business target — revenue, clients, or growth. Every AI decision anchors here.</div>
-      </div>
-      <div class="orbit-step">
-        <div class="step-letter" style="color:var(--r-color);">R</div>
-        <div class="step-word">Revenue Lever</div>
-        <div class="step-desc">Identifies whether the business needs to <strong style="color:var(--founder-white)">Acquire</strong>, <strong style="color:var(--founder-white)">Retain</strong>, or <strong style="color:var(--founder-white)">Expand</strong>. This one question changes everything.</div>
-      </div>
-      <div class="orbit-step">
-        <div class="step-letter" style="color:var(--b-color);">B</div>
-        <div class="step-word">Bottleneck</div>
-        <div class="step-desc">Diagnoses the single constraint blocking the outcome. Fix the real problem — not the symptoms.</div>
-      </div>
-      <div class="orbit-step">
-        <div class="step-letter" style="color:var(--i-color);">I</div>
-        <div class="step-word">Instruct</div>
-        <div class="step-desc">Only after O, R, and B are complete is the AI directive written — informed by strategy, not guesswork.</div>
-      </div>
-      <div class="orbit-step">
-        <div class="step-letter" style="color:var(--t-color);">T</div>
-        <div class="step-word">Track</div>
-        <div class="step-desc">Defines metrics, review cadence, and success criteria before launch. Measurement is built in from day one.</div>
-      </div>
-    </div>
-
-    <div class="pull-quote" style="margin-top:20px;padding:12px 20px;">
-      <p style="font-size:clamp(13px,1.3vw,15px);">ORBIT gives any business leader a structured way to use AI that ties every action to a measurable outcome — replacing trial-and-error prompting with a repeatable system that improves over time.</p>
-    </div>
-
-    <div class="brand-footer">
-      <div class="logo">OrbitumAI</div>
-      <div class="url">orbitumai.com</div>
-    </div>
-
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════
-       SLIDE 3 — ORBIT REPORT
-  ══════════════════════════════════════════════════════ -->
-  <div class="slide bg-ember">
-
-    <div class="eyebrow">ORBIT Reports &nbsp;·&nbsp; What a Completed Session Produces</div>
-    <div class="slide-title">The ORBIT Report</div>
-    <div class="accent-line" style="margin:10px 0 12px;"></div>
-
-    <p class="body" style="max-width:860px;margin-bottom:16px;">
-      An ORBIT Report is the structured output of a completed ORBIT session — a shareable strategic brief that any team member or AI tool can act on immediately. It turns a one-time conversation into a repeatable business process.
-    </p>
-
-    <!-- Sample Report Card -->
-    <div style="background:rgba(13,13,13,.7);border:1px solid rgba(196,98,45,.3);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow-card);">
-
-      <!-- Report Header -->
-      <div style="background:rgba(196,98,45,.12);padding:14px 24px;border-bottom:1px solid rgba(196,98,45,.2);display:flex;align-items:center;justify-content:space-between;">
-        <div style="font-family:var(--f-display);font-size:13px;font-weight:800;color:var(--founder-white);letter-spacing:.5px;">ORBIT Report &nbsp;<span style="color:rgba(247,245,242,.4);font-weight:500;">— Sample: Logistics Operations</span></div>
-        <div style="font-family:var(--f-body);font-size:11px;color:rgba(247,245,242,.35);">Q1 2025 &nbsp;·&nbsp; Dispatch Optimisation</div>
-      </div>
-
-      <!-- Report Rows -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;">
-
-        <div class="report-row">
-          <div class="report-letter-badge" style="background:rgba(196,98,45,.2);color:var(--o-color);">O</div>
-          <div>
-            <div class="report-label">Outcome</div>
-            <div class="report-value">Reduce dispatch errors by <strong>30%</strong> in 90 days — saving $180K annually</div>
+        <!-- ORBIT -->
+        <div class="fw-card live">
+          <div class="fw-card-top">
+            <div>
+              <div class="fw-num">Framework 01</div>
+              <div class="fw-name">ORBIT™</div>
+            </div>
+            <span class="status-pill pill-live"><span class="dot-live"></span>Live</span>
+          </div>
+          <div class="fw-tagline">The Business AI Operating Framework</div>
+          <div class="fw-desc">A five-step system that connects every AI initiative to a measurable business outcome. Replaces trial-and-error prompting with a repeatable strategic process.</div>
+          <div class="fw-steps">
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>O — Outcome:</strong> Define the exact business result required</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>R — Revenue Lever:</strong> Acquire, Retain, or Expand?</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>B — Bottleneck:</strong> The single constraint blocking the outcome</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>I — Instruct:</strong> AI directive written only after O, R, B are clear</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>T — Track:</strong> Metrics and review cadence defined upfront</span></div>
           </div>
         </div>
 
-        <div class="report-row" style="border-left:1px solid rgba(247,245,242,.05);">
-          <div class="report-letter-badge" style="background:rgba(212,168,67,.15);color:var(--r-color);">R</div>
-          <div>
-            <div class="report-label">Revenue Lever</div>
-            <div class="report-value"><strong>RETAIN</strong> — Protecting existing client SLA contracts from failure</div>
+        <!-- PITCH-XI -->
+        <div class="fw-card live">
+          <div class="fw-card-top">
+            <div>
+              <div class="fw-num">Framework 02</div>
+              <div class="fw-name">PITCH-XI™</div>
+            </div>
+            <span class="status-pill pill-live"><span class="dot-live"></span>Live</span>
+          </div>
+          <div class="fw-tagline">The Structured Prompt Framework</div>
+          <div class="fw-desc">A seven-layer prompt system that delivers board-ready AI outputs on the first attempt. Every layer removes a specific source of prompt failure.</div>
+          <div class="fw-steps">
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>P — Persona:</strong> Assigns AI a specific expert role</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>I — Instruction:</strong> The precise task with a defined deliverable</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>T — Task Context:</strong> Real business environment and constraints</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>C — Constraints:</strong> What not to do; format guardrails</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>H — Hook:</strong> Quality calibration reference point</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>XI — Execution + Intelligence:</strong> Logic path + business validation</span></div>
           </div>
         </div>
 
-        <div class="report-row" style="border-top:1px solid rgba(247,245,242,.05);">
-          <div class="report-letter-badge" style="background:rgba(61,75,92,.3);color:var(--b-color);">B</div>
-          <div>
-            <div class="report-label">Bottleneck</div>
-            <div class="report-value">Dispatchers working off spreadsheets — no real-time AI decision support</div>
+        <!-- FORCE -->
+        <div class="fw-card dev">
+          <div class="fw-card-top">
+            <div>
+              <div class="fw-num">Framework 03</div>
+              <div class="fw-name">FORCE™</div>
+            </div>
+            <span class="status-pill pill-dev"><span class="dot-dev"></span>In Development</span>
+          </div>
+          <div class="fw-tagline">The Workforce Transformation Methodology</div>
+          <div class="fw-desc">An enterprise methodology that bridges the gap between transformation plan and transformation reality. Built for Heads of Strategy at mid-market and enterprise organizations.</div>
+          <div class="fw-steps">
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>F — Future State:</strong> Define the AI-era workforce required</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>O — Organization Shape:</strong> Map structure vs. future requirement</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>R — Readiness Gap:</strong> Diagnose the delta</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>C — Capability Build:</strong> Design the transformation program</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>E — Execution Plan:</strong> Deploy at enterprise scale</span></div>
+          </div>
+          <div class="dev-note">Target: Head of Strategy / Transformation · Available later in 2025</div>
+        </div>
+
+        <!-- BUILD -->
+        <div class="fw-card dev">
+          <div class="fw-card-top">
+            <div>
+              <div class="fw-num">Framework 04</div>
+              <div class="fw-name">BUILD™</div>
+            </div>
+            <span class="status-pill pill-dev"><span class="dot-dev"></span>In Development</span>
+          </div>
+          <div class="fw-tagline">The No-Code AI Product Builder</div>
+          <div class="fw-desc">A step-by-step product creation methodology for non-technical founders. Takes any idea from concept to first revenue in 3–4 weeks using only no-code tools and AI assistants.</div>
+          <div class="fw-steps">
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>B — Blueprint:</strong> Validate the idea before building</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>U — Understand:</strong> Define user and workflow requirements</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>I — Implement:</strong> Build with no-code tools and prompt engineering</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>L — Launch:</strong> Ship fast to real users</span></div>
+            <div class="fw-step"><span class="fw-step-dot"></span><span><strong>D — Drive Results:</strong> Iterate to revenue</span></div>
+          </div>
+          <div class="dev-note">Target: Non-technical founders &amp; SMB owners · Available later in 2025</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Q&A ──────────────────────────────────────────────── -->
+    <div id="panel-qa" class="panel">
+      <div class="panel-eyebrow">Island AI Solutions Specialist</div>
+      <div class="panel-title">Interview Q&amp;A</div>
+      <div class="panel-sub">18 questions answered in my own voice</div>
+      <div class="accent-line"></div>
+
+      <!-- Section 1 -->
+      <div class="qa-section">
+        <div class="qa-section-title">General AI Understanding</div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">01</span>How would you describe AI to someone non-technical?</div>
+          <div class="qa-a">I usually say — imagine you have an incredibly well-read assistant who has absorbed billions of documents and conversations. You give them a task in plain English, and they figure out the best way to get it done. They're not thinking the way humans do, but they're pattern-matching at a scale no human ever could. For most people that clicks immediately.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">02</span>Can you give an example of a business problem you think AI is particularly well-suited to solve?</div>
+          <div class="qa-a">There are many — but the one I keep coming back to is the gap between what a business knows and what it actually acts on. Most organizations are sitting on mountains of data, processes, and institutional knowledge that never gets fully utilized because humans simply don't have the bandwidth to process it all. AI closes that gap.<br><br>But here's where I think most people get it wrong — they jump straight to the AI tool before they've defined the problem. That's exactly why I built the <strong style="color:var(--founder-white);">ORBIT™ framework</strong>. Every business problem I work on, I run through five questions first: What's the <strong style="color:var(--founder-white);">Outcome</strong> we're actually trying to achieve? Which <strong style="color:var(--founder-white);">Revenue Lever</strong> does it connect to — are we trying to acquire, retain, or expand? What's the real <strong style="color:var(--founder-white);">Bottleneck</strong> — not the symptom, the root cause? Only then do I write the AI <strong style="color:var(--founder-white);">Instruction</strong>. And finally, how do we <strong style="color:var(--founder-white);">Track</strong> it? That structure alone changes the quality of every AI implementation.<br><br>A concrete example: I built AILeadCalling — an AI voice agent platform. The business problem wasn't "we need AI calling." The real problem was that sales teams were spending the majority of their time on cold outreach that converted at under 2%. The bottleneck was human bandwidth, not intent. Running that through ORBIT changed the framing entirely — and the result was a system that handles inbound and outbound calls, qualifies leads in real-time, analyzes sentiment, and books calendar appointments automatically.<br><br>The second area I'm deeply focused on is <strong style="color:var(--founder-white);">workforce transformation</strong>. This is the most underestimated problem AI can solve. Most companies are rolling out AI tools without asking the harder question — what does our workforce actually need to look like in an AI-driven world? That's the gap my <strong style="color:var(--founder-white);">FORCE™ framework</strong> is designed to address: defining the future-state workforce, mapping readiness gaps, building capability programs tied to execution — not just a strategy deck that sits on a shelf.<br><br>From where I sit, the businesses that win with AI aren't the ones that buy the most tools. They're the ones that align every AI initiative to a measurable outcome, transform their people alongside the technology, and build repeatable systems instead of one-off experiments.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">03</span>What's your experience working with AI tools, frameworks, or model providers?</div>
+          <div class="qa-a">My entire approach to AI is hands-on and production-focused. I don't experiment for the sake of it — every tool I've worked with has been in the context of building something real that solves an actual business problem.<br><br>
+
+On the <strong style="color:var(--founder-white);">model provider side</strong>, I've worked across a wide range of models and providers — not just the big names. My primary stack is <strong style="color:var(--founder-white);">Anthropic Claude</strong> for deep reasoning and long-context work, and <strong style="color:var(--founder-white);">OpenAI GPT</strong> for structured outputs and general tasks. I've also worked extensively with <strong style="color:var(--founder-white);">Azure OpenAI</strong> for enterprise compliance scenarios, <strong style="color:var(--founder-white);">DeepSeek</strong> and <strong style="color:var(--founder-white);">Grok</strong> for cost-efficient reasoning tasks, and <strong style="color:var(--founder-white);">Ollama</strong> for running open-source models locally — which matters a lot when clients have data privacy requirements that rule out cloud APIs. I've also worked with <strong style="color:var(--founder-white);">Deep Infra</strong> and <strong style="color:var(--founder-white);">Kimi K2</strong> for high-context, long-document workloads where cost-per-token is a real consideration. On the video AI side, I've used <strong style="color:var(--founder-white);">HeyGen</strong> for AI avatar and video generation workflows. What this breadth gives me is the ability to make genuine provider selection decisions based on the use case — not just default to whatever's most popular.<br><br>
+
+On the <strong style="color:var(--founder-white);">tooling and orchestration side</strong>, <strong style="color:var(--founder-white);">n8n</strong> is my primary environment — multi-step AI workflows, webhook processors, CRM integrations, and full agent pipelines. I've also worked with <strong style="color:var(--founder-white);">LangChain</strong> for chained reasoning flows and have hands-on familiarity with <strong style="color:var(--founder-white);">MCP (Model Context Protocol)</strong> for standardizing how AI agents communicate with external tools and data sources.<br><br>
+
+On the <strong style="color:var(--founder-white);">industry-standard AI frameworks</strong>, I'm familiar with and have worked across: <strong style="color:var(--founder-white);">ReAct</strong> (Reasoning + Acting — how agents think step by step before taking action), <strong style="color:var(--founder-white);">RAG — Retrieval-Augmented Generation</strong> (grounding AI outputs in proprietary knowledge bases), <strong style="color:var(--founder-white);">Chain-of-Thought prompting</strong> (structuring reasoning paths for complex multi-step problems), <strong style="color:var(--founder-white);">Agentic AI patterns</strong> (multi-agent orchestration, tool use, decision routing), and <strong style="color:var(--founder-white);">Prompt Chaining</strong> (breaking complex tasks into sequential, validated steps). On the enterprise governance side, I'm familiar with frameworks like <strong style="color:var(--founder-white);">NIST AI RMF</strong> and <strong style="color:var(--founder-white);">ISO/IEC 42001</strong> as the standards organizations use to govern responsible AI adoption — which is directly relevant to the visibility and compliance layer Island is building.<br><br>
+
+On the <strong style="color:var(--founder-white);">my own framework side</strong>, I've built <strong style="color:var(--founder-white);">ORBIT™</strong> — a five-step methodology that ties every AI initiative to a measurable business outcome before a single prompt is written — and <strong style="color:var(--founder-white);">PITCH-XI™</strong> — a seven-layer prompt engineering system that eliminates re-prompting entirely. These aren't theoretical — they're what I use in every engagement.<br><br>
+
+The honest truth is I'm not a traditional developer. What I do is understand how AI systems work at an architectural level, make sharp decisions about which models and tools to use, and build things that run in production — using prompt engineering, orchestration platforms, and no-code tooling as my primary stack. That combination moves faster and delivers more reliable outcomes for most enterprise AI use cases than starting from raw code.</div>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="qa-section">
+        <div class="qa-section-title">Customer-Facing Experience</div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">04</span>Have you led customer meetings, presentations, or technical workshops?</div>
+          <div class="qa-a">Yes — and honestly, this is one of the areas where my background gives me a real edge. Over 25 years across program management, enterprise transformation, and consulting, leading stakeholder meetings and cross-functional sessions wasn't occasional — it was the job.<br><br>
+
+At Wesco, I was coordinating payroll implementation across 51 countries, managing 24 vendors, and presenting to leadership across time zones. At Genpact, I was driving a headquarters relocation for 30 business units — that's a constant cycle of alignment meetings, executive briefings, and change management sessions with people who had very different priorities. At Founder Institute, I mentored founders through strategic decision points — which is a very different kind of conversation, closer to coaching than presenting, but requires the same clarity.<br><br>
+
+What those experiences taught me is that the prep matters less than the read. You can prepare the perfect deck and still lose the room if you're not listening. My approach has always been to understand what the person across the table is actually worried about — not just what's on the agenda — and anchor the conversation there. That skill transfers directly into AI consulting, where I'm regularly helping non-technical business leaders understand something complex and make a decision about it.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">05</span>Describe your customer-facing experience and the industries you've worked with.</div>
+          <div class="qa-a">Customer-facing work has been the constant thread across my entire career — not a subset of it. Let me walk through the layers.<br><br>
+
+The earliest was at <strong style="color:var(--founder-white);">Intel</strong>, where I managed IT and end-user services across Southeast Asia. That meant working with channel partners, business sponsors, and regional stakeholders across multiple countries and cultures — very different expectations, very different communication styles. That experience built a foundation for how I read a room and adapt in real time.<br><br>
+
+Then at <strong style="color:var(--founder-white);">Thinkbrik Knowledge Solutions</strong> — a startup I co-founded in New Delhi — I was responsible for all customer relationships across tech, digital marketing, and e-learning. As a founder, you are the customer experience. I managed client delivery, business development, and sales simultaneously, across industries including corporate training, software, and digital services. Six years of that teaches you something no corporate job can — how to earn trust with limited resources and no brand name behind you.<br><br>
+
+At <strong style="color:var(--founder-white);">Genpact</strong>, I was the face of a major program managing an automobile company's HQ relocation across 30 business units. That's a high-stakes, politically sensitive engagement — different business unit leaders all with competing priorities, and my job was to keep everyone aligned and moving. At <strong style="color:var(--founder-white);">Wesco Distribution</strong>, I was managing global programs with 24 external vendors across 51 countries — vendor management at that scale is fundamentally a customer-facing role. Every vendor relationship required negotiation, alignment, and trust-building.<br><br>
+
+In between, I spent two years as an independent <strong style="color:var(--founder-white);">Startups Consultant</strong> advising early-stage companies on business model design, MVP development, market research, and investor readiness — very hands-on, very direct client work. And at <strong style="color:var(--founder-white);">Founder Institute</strong>, I mentored founders — which is a different kind of customer relationship but demands the same thing: listening carefully, diagnosing the real problem, and giving advice that's actually useful, not just what sounds good.<br><br>
+
+Today through <strong style="color:var(--founder-white);">OrbitumAI</strong>, I work directly with solopreneurs, startups, and SMBs on AI strategy, product development, and workflow automation. My clients are typically non-technical business owners who need a partner who can translate between what AI can do and what their business actually needs — and then build it.<br><br>
+
+Industries across all of this: IT services, payroll and HR, supply chain, digital marketing, e-learning, automotive, recruitment, and now AI consulting. The through-line isn't the industry — it's the ability to walk into any room, understand what the person across from me is actually trying to solve, and earn their trust by delivering something real.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">06</span>What's an example of a time you had to deliver complex or technical information to a non-technical audience?</div>
+          <div class="qa-a">I have a few that come to mind, but let me share two that represent different ends of the spectrum.<br><br>
+
+The first was at <strong style="color:var(--founder-white);">Genpact</strong>, where I was managing the HQ relocation of a major automobile company across 30 business units. Part of that program involved a Knowledge Management initiative — we were capturing tacit knowledge from thousands of employees and converting it into over 7,000 structured knowledge assets. The challenge was getting business unit leaders, who had zero interest in knowledge management theory, to understand why this mattered and what we needed from their teams. I didn't talk about the system or the methodology. I asked them one question: "What happens when your best person walks out the door?" That reframe changed every conversation. Suddenly it wasn't an IT project — it was a risk they already understood and cared about.<br><br>
+
+The second is more recent and more directly relevant to this role. When I work with founders and SMB clients through <strong style="color:var(--founder-white);">OrbitumAI</strong>, I'm regularly sitting across from business owners who have heard a lot about AI but understand very little of it — and are appropriately skeptical. Rather than explaining how the technology works, I walk them through the <strong style="color:var(--founder-white);">ORBIT™ framework</strong> — five questions that have nothing to do with AI and everything to do with their business. By the time we get to the AI part, they've already defined the outcome, identified the bottleneck, and agreed on how we'll measure success. The technology becomes the answer to a question they've already asked themselves. That's when non-technical people stop being confused and start making decisions.<br><br>
+
+The common thread in both: I don't simplify the complexity — I find the version of it that the person in front of me already has a frame for. That's a different skill, and it's one I've been building for 25 years.</div>
+        </div>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="qa-section">
+        <div class="qa-section-title">Communication Skills</div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">07</span>How do you ensure clarity explaining complex technical topics?</div>
+          <div class="qa-a">Twenty-five years of working across enterprise programs, founders, and non-technical business leaders has forced me to get very good at this — because if I couldn't translate complexity, nothing would move.<br><br>
+
+My first principle is to lead with <strong style="color:var(--founder-white);">the decision, not the explanation</strong>. Most non-technical people don't need to understand how something works — they need to understand what it means for them and what they should do about it. So I always ask myself before any conversation: what is the one thing I need this person to walk away knowing or deciding? Everything else is context, not content.<br><br>
+
+The second thing I do is anchor to something they already own. At Genpact, when I needed buy-in on a complex knowledge management program, I didn't explain the architecture — I asked "what happens when your best person leaves?" That one question did more work than any slide deck. With AI specifically, when I sit with a business owner through the <strong style="color:var(--founder-white);">ORBIT™ framework</strong>, I'm not talking about models or APIs. I'm asking about their revenue, their bottlenecks, their team. By the time we get to AI, they're already in the frame — I'm just showing them where the tool fits.<br><br>
+
+Third — and this one comes from running global programs across 51 countries at Wesco — I never assume comprehension. Different stakeholders process information differently. Some want data, some want stories, some want a one-pager. I read the room early and adjust the format, not just the language.<br><br>
+
+And honestly, the most underrated clarity tool I have is the follow-up question. Not "does that make sense?" — that's too easy to say yes to. I ask "what would you tell your team about this?" or "what's your biggest concern now?" Those answers tell me exactly where the gaps are.<br><br>
+
+A concrete example: at <strong style="color:var(--founder-white);">Wesco</strong>, we were running a global payroll transformation across 51 countries — a 24-month program with significant cross-functional complexity, 24 vendors, and tight regulatory dependencies across regions. We were deep into execution when Wesco completed an acquisition. With that acquisition came 1,050 employees on Google Workspace, and a leadership decision to migrate them to Microsoft 365 — folded into the back end of the payroll program as a single combined cutover.<br><br>
+
+The logic was understandable from a governance standpoint — consolidate change, one communication cycle, fewer workstreams. But I saw several compounding failure modes immediately. <strong style="color:var(--founder-white);">Dependency risk:</strong> payroll cutover has hard go/no-go criteria tied to parallel run results, vendor sign-offs, and country-specific compliance validations. Coupling email migration to that critical path meant any email issue could delay payroll go-live — and any payroll delay would leave 1,050 employees stranded on both systems simultaneously. <strong style="color:var(--founder-white);">Change saturation:</strong> these employees were already absorbing a new employer, new HR systems, new payroll processes. Layering an email platform migration on top created a change load that would spike support tickets, reduce adoption quality on both workstreams, and leave no clean rollback path if issues surfaced during parallel run. <strong style="color:var(--founder-white);">Helpdesk concentration risk:</strong> if both systems went live in the same window, any support issue — password resets, login failures, data sync errors — would be nearly impossible to triage cleanly. You'd lose critical go-live support hours just routing tickets.<br><br>
+
+The case was clear to me. The challenge was that the people I needed to convince were program sponsors focused on timeline and budget efficiency — not technical risk. I didn't lead with risk registers or dependency matrices. I asked one question: <em style="color:var(--strategy-gold);">"When payroll goes live across 51 countries and something breaks — and something always breaks — do you want your support team troubleshooting a new email system at the same time?"</em> The room went quiet. I followed with: "If we run email first, we take it off the critical path entirely. Payroll goes live with one fewer variable." That framing — not risk reduction, but critical path simplification — was what landed.<br><br>
+
+We decoupled the workstreams. Email ran as its own focused project ahead of payroll go-live, with dedicated change management. By the time payroll went live, email was stable, employees were trained, and our support capacity was fully available for what mattered most. Clean cutover. No ticket bleed. That's what it looks like when you catch a program design flaw early enough to do something about it.</div>
+
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">08</span>Example of using storytelling or visuals for a technical concept?</div>
+          <div class="qa-a">I built a simple visual once showing a workflow as a literal assembly line — raw input goes in one end, a finished output comes out the other, with each AI step labeled as a "station." Executives stopped asking "how does it work" and started asking "where do we plug this in." That's when you know the communication landed.</div>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="qa-section">
+        <div class="qa-section-title">AI &amp; Model Provider Knowledge</div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">09</span>What is a model provider and how are they integrated?</div>
+          <div class="qa-a">A model provider is a company that trains a large language model and makes it accessible — typically through an API — so developers and builders can integrate AI capabilities into their own products and workflows without having to build or host the model themselves. Think of them the same way you'd think of a cloud infrastructure provider, but instead of compute, you're renting intelligence.<br><br>
+
+The major providers I've worked with directly are <strong style="color:var(--founder-white);">Anthropic (Claude)</strong>, <strong style="color:var(--founder-white);">OpenAI (GPT-4, GPT-4o)</strong>, <strong style="color:var(--founder-white);">Microsoft Azure OpenAI</strong>, <strong style="color:var(--founder-white);">DeepSeek</strong>, <strong style="color:var(--founder-white);">Grok (xAI)</strong>, <strong style="color:var(--founder-white);">Ollama</strong> for local open-source models, and <strong style="color:var(--founder-white);">Deep Infra</strong> for serving models like Kimi K2 at scale. Each exposes a REST API — you send a structured request with your model choice, system prompt, user message, and parameters like temperature and max tokens, and get a completion back.<br><br>
+
+Integration-wise, I connect to these providers in a few ways depending on the use case. In <strong style="color:var(--founder-white);">n8n</strong>, I use HTTP Request nodes or native AI nodes to call provider APIs directly — this is how I wire model calls into multi-step business workflows, with logic, routing, and data handling around them. For more complex orchestration, I've used <strong style="color:var(--founder-white);">LangChain</strong> to chain model calls, manage memory, and connect to retrieval systems. For enterprise clients with data residency requirements, <strong style="color:var(--founder-white);">Azure OpenAI</strong> is the integration path — same GPT models, but running inside the client's own Azure tenant, which satisfies most compliance frameworks.<br><br>
+
+The providers are not interchangeable in practice, even if the API structure looks similar. Claude handles long-context documents and nuanced instruction-following better than most — it's what I use for anything requiring careful reasoning or sensitive tone. GPT-4o is fast and strong on structured output tasks. DeepSeek and Kimi K2 are cost-efficient for high-volume workloads where you're running a lot of inference. Ollama is the right call when data cannot leave the client's environment at all. Knowing which provider to use for which job — and why — is a material part of building AI systems that are both reliable and economically viable at scale.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">10</span>How would you choose which AI model to use?</div>
+          <div class="qa-a">Model selection is one of the most consequential decisions in any AI implementation — and it's one most people get wrong because they default to whatever they used last or whatever got the most press. I approach it as a structured decision, not a preference.<br><br>
+
+There are four dimensions I evaluate every time.<br><br>
+
+<strong style="color:var(--founder-white);">First — data residency and compliance.</strong> This is always the first gate. If the client operates in a regulated industry or has data sovereignty requirements, the model selection is partially decided before you even evaluate capability. Azure OpenAI runs inside the client's own tenant — same GPT models, but the data never leaves their environment. Ollama lets me run open-source models entirely on-premise with zero external API calls. If neither of those constraints apply, the full provider landscape is open.<br><br>
+
+<strong style="color:var(--founder-white);">Second — task type and reasoning complexity.</strong> I think about this in tiers. For complex reasoning, nuanced instruction-following, long-document analysis, or anything where the output quality has real business stakes — Claude is my first choice. Its instruction adherence and context handling at length is genuinely better. For structured output tasks — JSON extraction, classification, formatted summaries — GPT-4o is fast and reliable. For high-volume, lower-complexity tasks where I'm running thousands of inference calls — DeepSeek or Kimi K2 via Deep Infra give me strong performance at a fraction of the cost. For anything involving video or avatar-based communication, HeyGen handles that layer entirely.<br><br>
+
+<strong style="color:var(--founder-white);">Third — latency and volume economics.</strong> In production systems, cost per token and response time are real constraints. A model that's brilliant but expensive becomes unsustainable at scale. I always model out the inference cost before committing to a provider for a production workflow — especially in something like AILeadCalling, where every voice agent call is triggering multiple model calls in real time.<br><br>
+
+<strong style="color:var(--founder-white);">Fourth — integration fit.</strong> How cleanly does the provider connect to the orchestration layer I'm using? Some providers have native n8n nodes, others require custom HTTP requests. That's not a blocker but it's a factor in build time and maintenance overhead.<br><br>
+
+The honest answer is that I almost never rely on a single model for a full system. Most of what I build uses different providers for different layers — one for reasoning, one for structured extraction, one for cost-sensitive volume tasks. Knowing when to use which, and why, is the craft.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">11</span>Describe how RAG works and how it improves performance.</div>
+          <div class="qa-a">RAG — Retrieval-Augmented Generation — is an architectural pattern that decouples a model's parametric knowledge (what it learned during training) from the dynamic, domain-specific knowledge your application actually needs at runtime. Instead of relying solely on what the model was trained on — which has a knowledge cutoff, no access to proprietary data, and no awareness of your specific business context — RAG retrieves relevant information at query time and injects it into the prompt as grounded context before the model generates a response.<br><br>
+
+The pipeline has three distinct phases. In the <strong style="color:var(--founder-white);">indexing phase</strong>, your source documents — PDFs, knowledge bases, internal wikis, CRM notes, whatever — are chunked into segments, converted into vector embeddings using an embedding model (OpenAI's text-embedding-ada, Cohere, or similar), and stored in a vector database like Pinecone, Weaviate, or Supabase's pgvector extension, which I've worked with directly in the AILeadCalling architecture. In the <strong style="color:var(--founder-white);">retrieval phase</strong>, when a user submits a query, that query is also converted into an embedding and a semantic similarity search is run against the vector store — not keyword matching, but meaning-based matching. The top-k most semantically relevant chunks are retrieved. In the <strong style="color:var(--founder-white);">generation phase</strong>, those retrieved chunks are injected into the model's context window alongside the original query, and the LLM generates a response grounded in that retrieved content rather than hallucinating from training data alone.<br><br>
+
+The performance improvements are significant and measurable across several dimensions. <strong style="color:var(--founder-white);">Hallucination reduction</strong> — the model is answering from retrieved facts, not reconstructing from parametric memory, which dramatically reduces confident but wrong responses. <strong style="color:var(--founder-white);">Knowledge freshness</strong> — because retrieval happens at runtime, your AI system reflects current data without requiring model retraining or fine-tuning. <strong style="color:var(--founder-white);">Domain specificity</strong> — a general model with RAG on your proprietary data outperforms a general model without it on domain-specific tasks, often significantly. <strong style="color:var(--founder-white);">Cost efficiency</strong> — RAG is substantially cheaper than fine-tuning a model for domain adaptation, and far more maintainable since you update the knowledge base, not the model weights.<br><br>
+
+Where it gets nuanced in production is chunk strategy, retrieval quality, and context window management. Chunk size matters — too large and you dilute relevance, too small and you lose context. Retrieval ranking matters — naive top-k cosine similarity isn't always enough; hybrid search combining dense and sparse retrieval improves precision. And context window stuffing is a real constraint — if you retrieve too many chunks, you hit token limits and degrade generation quality. These are the engineering decisions that determine whether a RAG system actually performs in production versus just works in a demo.<br><br>
+
+In the enterprise context specifically — which is directly relevant to what Island is building — RAG is the foundation of any serious AI visibility or knowledge governance layer. It's what allows an enterprise to keep sensitive data inside their own infrastructure, maintain auditability of what the model was given access to, and update their AI's knowledge base without touching the underlying model.</div>
+        </div>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="qa-section">
+        <div class="qa-section-title">MCP &amp; Integration</div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">12</span>What is MCP and how does it standardize AI communication?</div>
+          <div class="qa-a">MCP — Model Context Protocol — is an open standard introduced by Anthropic that defines how AI models communicate with external tools, data sources, and services in a structured, interoperable way. Before MCP, every integration between an AI agent and an external system was bespoke — custom API wrappers, one-off prompt engineering to describe tool behavior, brittle glue code that broke when either side changed. MCP solves this by establishing a universal protocol layer between the model and the outside world.<br><br>
+
+Architecturally, MCP operates on a client-server model. The <strong style="color:var(--founder-white);">MCP host</strong> is the AI application or agent runtime — Claude Desktop, a custom agent framework, or an orchestration layer like n8n. The <strong style="color:var(--founder-white);">MCP client</strong> lives inside that host and manages connections to one or more MCP servers. The <strong style="color:var(--founder-white);">MCP server</strong> is a lightweight process that wraps an external capability — a database, a file system, a REST API, a CRM — and exposes it through three standardized primitives: <strong style="color:var(--founder-white);">Tools</strong> (functions the model can invoke), <strong style="color:var(--founder-white);">Resources</strong> (data the model can read), and <strong style="color:var(--founder-white);">Prompts</strong> (templated instructions the server can provide). The model communicates with the server using JSON-RPC 2.0 over stdio or HTTP with SSE transport.<br><br>
+
+What this standardization actually delivers in practice is significant. Any MCP-compatible model can connect to any MCP-compatible server without custom integration code. You build the server once, and any agent that speaks MCP can use it. For enterprise environments specifically — which is directly relevant to Island's platform — MCP creates a governance layer around what tools and data an AI agent is permitted to access, with clear boundaries between the model's reasoning and the systems it operates on. That separation is foundational for AI visibility, auditability, and compliance. You can see exactly what the agent called, what it received, and what it did with the result — which is the kind of transparency enterprise security teams require before they'll approve AI in production.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">13</span>How would you design an MCP server for external data sources?</div>
+          <div class="qa-a">Designing an MCP server starts with a capability audit — before writing a single line of configuration, I map exactly what the agent needs to do and what data it needs access to. That sounds obvious but most people skip it and end up building servers that expose too much, which creates both security surface area and model confusion. A well-designed MCP server exposes the minimum viable set of tools for the agent's task.<br><br>
+
+The design process I follow has four steps. <strong style="color:var(--founder-white);">First — define the tool contract.</strong> Each tool exposed by the MCP server needs a precise name, a clear description the model will use to decide when to invoke it, and a well-typed input schema. The description is as important as the implementation — if the model can't reliably distinguish between tools, it will call the wrong one. I write tool descriptions the same way I write prompts: specific, unambiguous, with examples of when to use and when not to.<br><br>
+
+<strong style="color:var(--founder-white);">Second — implement the data connectors.</strong> This is where the actual integration work lives — connecting the MCP server to the underlying system, whether that's a REST API, a SQL database, a vector store, or a file system. In my builds, I use n8n as the orchestration backend that the MCP server calls into, which means I can wire complex multi-step data retrieval workflows without writing raw code. The MCP server becomes a clean interface; the complexity lives in the workflow layer underneath.<br><br>
+
+<strong style="color:var(--founder-white);">Third — scope the resources.</strong> Beyond tools (actions), MCP servers can expose resources — structured data the model can read contextually. For an enterprise use case, this might be CRM records, policy documents, or real-time operational data. I define resource URIs and templates that give the agent read access to what it needs without opening a broader data surface.<br><br>
+
+<strong style="color:var(--founder-white);">Fourth — validate tool invocation behavior.</strong> I test the server by prompting the model with edge cases and verifying it selects the right tool, passes valid parameters, and handles error responses gracefully. A server that works in the happy path but breaks on malformed input or empty results will fail in production. Error handling and fallback behavior need to be defined at the server level, not left to the model.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">14</span>How would you handle auth, privacy, and rate limiting across MCP servers?</div>
+          <div class="qa-a">These three concerns — authentication, data privacy, and rate limiting — are what separate a demo MCP integration from one you'd actually deploy in an enterprise environment. Each requires deliberate design, not afterthought configuration.<br><br>
+
+<strong style="color:var(--founder-white);">Authentication.</strong> Credentials never live in prompts, never in model context, and never in the MCP tool description. Authentication is handled at the transport layer between the MCP client and server — either through environment variables injected at server startup, OAuth 2.0 token flows managed by the host application, or API key headers passed via the HTTP transport configuration. For multi-server setups, each server maintains its own credential scope — a server connecting to a CRM has no access to the credentials used by a server connecting to a file system. In n8n, I store all credentials in the encrypted credential store and reference them by name in workflow nodes, so they're never exposed in configuration or logs.<br><br>
+
+<strong style="color:var(--founder-white);">Data privacy.</strong> The principle I apply is minimum necessary exposure — the model only sees what it needs to generate a correct response, nothing more. In practice this means data masking at the MCP server level before content enters the context window. PII fields get redacted or tokenized. Sensitive financial or health data gets summarized rather than passed raw. For enterprise deployments under frameworks like GDPR or HIPAA, I design the resource layer to enforce these transformations as a server-side concern, so the compliance boundary is clear and auditable regardless of how the model is prompted.<br><br>
+
+<strong style="color:var(--founder-white);">Rate limiting.</strong> I handle this in layers. At the MCP server level, I implement request throttling aligned to the upstream API's limits — if the CRM API allows 100 requests per minute, the server enforces that ceiling with a token bucket or sliding window algorithm, not just a retry on 429. At the orchestration level in n8n, I add exponential backoff with jitter on failure, queue depth controls to prevent cascade failures when upstream systems slow down, and circuit breaker logic that degrades gracefully rather than hammering a struggling service. For multi-server workflows where several MCP servers are called in sequence, I also model the aggregate latency and build timeout budgets at the workflow level so a slow server doesn't silently break the entire agent pipeline.</div>
+        </div>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="qa-section">
+        <div class="qa-section-title">JavaScript &amp; Technical Implementation</div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">15</span>How would you call an AI model from JavaScript and handle the response?</div>
+          <div class="qa-a">Conceptually the pattern is straightforward — and understanding it clearly matters even when you're implementing through an orchestration layer rather than raw code, because you need to know what's happening underneath to debug it when something goes wrong.<br><br>
+
+A basic call to an Anthropic or OpenAI-compatible endpoint is an authenticated POST request to the provider's messages endpoint. The request body carries the model identifier, a messages array structured as a conversation history with role and content pairs, and generation parameters — max tokens, temperature, stop sequences. The response comes back as a JSON object; you extract the generated text from the content array, check the stop reason to understand why generation ended (max tokens vs. natural stop vs. tool use), and handle errors by status code — 401 for auth failures, 429 for rate limits, 500 for provider-side issues, each requiring different handling logic.<br><br>
+
+Where it gets more complex in production is streaming, tool use, and multi-turn state management. For real-time applications — like the voice agent pipeline in AILeadCalling — you want streaming responses using server-sent events rather than waiting for the full completion, which adds latency. For agentic workflows, the response may not be text at all — it may be a tool_use block instructing the application to call a function and return the result, which kicks off a secondary request with the tool result appended to the conversation history. Managing that loop reliably, with proper error handling at each step, is where most implementations break down.<br><br>
+
+I implement this through n8n's HTTP Request nodes and native AI agent nodes in practice, but I understand the underlying request/response cycle precisely enough to design the architecture, specify the error handling requirements, and work directly with a developer to implement or debug any layer of it.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">16</span>How would you structure a JS module interacting with an MCP server?</div>
+          <div class="qa-a">The architecture I'd apply here follows a clean separation of concerns — each layer has one responsibility and is independently testable and replaceable. This isn't just good software design; it's what makes MCP integrations maintainable when the underlying tool API changes or when you need to swap providers.<br><br>
+
+The module breaks into four layers. The <strong style="color:var(--founder-white);">transport client</strong> handles all HTTP communication with the MCP server — connection management, authentication headers, JSON-RPC 2.0 message formatting, and transport-level error handling. It knows nothing about what the tools do; it just sends and receives messages reliably. The <strong style="color:var(--founder-white);">tool registry</strong> maintains the catalog of available tools — their names, input schemas, and descriptions. At initialization, it calls the MCP server's list_tools endpoint and caches the result. This is what lets the orchestration layer make informed decisions about which tool to invoke without hard-coding tool names throughout the codebase. The <strong style="color:var(--founder-white);">invocation handler</strong> takes a tool call — either from the model's output or from application logic — validates the parameters against the schema, dispatches the call through the transport client, and normalizes the response into a consistent format the rest of the application can rely on regardless of which tool was called. The <strong style="color:var(--founder-white);">state and context manager</strong> handles conversation history, tool result injection back into the model's context window, and multi-turn session state for agentic workflows that require several tool invocations across a single task.<br><br>
+
+The design pattern this maps to is a service adapter with a facade interface — the application code calls a clean, stable API regardless of which MCP server or tool is underneath. When a tool changes its input schema or a new server is added, only the registry and transport layers need to update; the rest of the application is insulated.<br><br>
+
+I approach this from an architecture and systems design perspective. I define the layer boundaries, the data contracts between them, and the error handling requirements at each layer — then work with a developer to implement. In practice, a well-specified architecture is what prevents the kind of spaghetti integrations that break every time a provider updates their API.</div>
+        </div>
+      </div>
+
+      <!-- Section 7 -->
+      <div class="qa-section">
+        <div class="qa-section-title">Automation &amp; Orchestration</div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">17</span>Have you integrated AI with automation platforms? What was your approach?</div>
+          <div class="qa-a">Yes — and this is where the majority of my production AI work lives. n8n is my primary orchestration environment, and I've built everything from simple two-step AI workflows to multi-agent pipelines with conditional routing, error handling, and external system integrations running in production.<br><br>
+
+My approach to any AI automation starts the same way regardless of complexity — <strong style="color:var(--founder-white);">process archaeology before automation design</strong>. I map the manual process completely first: every human decision point, every data input, every system touched, every exception case. Most automation failures I've seen happen because someone automated the happy path and ignored the 20% of cases that don't fit the template. Understanding the full process — including the exceptions — is what makes the difference between a workflow that runs reliably and one that needs constant babysitting.<br><br>
+
+Once the process is mapped, I identify the specific leverage points for AI — typically where a human is reading and interpreting unstructured content, making a judgment call with incomplete information, or translating between formats. Those are the nodes where LLM calls add the most value. Everything else — data transformation, routing, API calls, record updates — is standard workflow automation that doesn't need AI at all. Keeping AI scoped to the right nodes makes the system faster, cheaper, and easier to debug.<br><br>
+
+In terms of concrete integrations: in <strong style="color:var(--founder-white);">AILeadCalling</strong>, n8n handles the orchestration layer connecting Telnyx webhooks, Retell AI, Claude's sentiment analysis API, Cal.com booking, and Supabase — all wired together with conditional branching based on call outcomes and sentiment scores. In <strong style="color:var(--founder-white);">BrewongoAI</strong>, n8n drives the content generation pipeline — intake, outline generation, content expansion, SEO optimization — as a sequential workflow with quality gates between steps. I've also used <strong style="color:var(--founder-white);">Make</strong> for lighter integration work and understand how to select between platforms based on workflow complexity, execution volume, and cost structure.</div>
+        </div>
+        <div class="qa-item">
+          <div class="qa-q"><span class="qa-q-num">18</span>How would you architect dynamic model selection and data routing?</div>
+          <div class="qa-a">Dynamic model selection and data routing is essentially an intelligent dispatch problem — you need a system that can classify an incoming request, evaluate it against multiple criteria simultaneously, and route it to the right model and data pathway without human intervention. The architecture has to be reliable, observable, and maintainable as your model landscape evolves.<br><br>
+
+The architecture I'd design has four layers. The <strong style="color:var(--founder-white);">classification layer</strong> is first — every incoming request gets evaluated on at least three dimensions: task type (reasoning, summarization, extraction, generation, classification), data sensitivity (public, internal, confidential, regulated), and performance profile (latency-sensitive real-time vs. throughput-optimized batch). This classification is itself an AI call — a fast, cheap model like GPT-4o-mini or a fine-tuned classifier makes the routing decision, so the system is adaptive rather than rule-based. The classification output is a structured routing directive, not a free-text response.<br><br>
+
+The <strong style="color:var(--founder-white);">routing layer</strong> takes that directive and executes model selection from a provider registry. This registry maps task/sensitivity/performance combinations to provider configurations — including model identifier, endpoint, temperature settings, and max token budget. Routing rules are configuration, not code, which means they can be updated without deployment. If a new model becomes available or a provider's pricing changes, you update the registry and the routing adapts immediately.<br><br>
+
+The <strong style="color:var(--founder-white);">data routing layer</strong> runs in parallel — based on the sensitivity classification, it determines which data sources the model is permitted to access and applies the appropriate retrieval strategy. A confidential request routes to an on-premise Ollama instance with a private vector store. A regulated request routes to Azure OpenAI with PII masking applied before context injection. A standard request routes to the most cost-efficient provider with full RAG access.<br><br>
+
+The <strong style="color:var(--founder-white);">observability layer</strong> wraps all of this — every routing decision is logged with the classification rationale, the model selected, the data sources accessed, token consumption, latency, and the output. This is what makes the system auditable for enterprise governance and what gives you the data to continuously tune routing rules as model capabilities and costs evolve.<br><br>
+
+In practice I'd implement the classification and routing logic in n8n using a combination of AI agent nodes and conditional branching, with the provider registry maintained as a structured JSON configuration. For high-volume production systems, I'd work with a developer to implement the classification layer as a dedicated microservice with caching to avoid the latency cost of classifying every request cold.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ARCHITECTURE ───────────────────────────────────────── -->
+    <div id="panel-arch" class="panel">
+      <div class="panel-eyebrow">Product Builds</div>
+      <div class="panel-title">What I've Built</div>
+      <div class="panel-sub">Two production AI products — summarized architecture</div>
+      <div class="accent-line"></div>
+
+      <div class="arch-grid">
+
+        <!-- AILeadCalling -->
+        <div class="arch-card">
+          <div class="arch-card-header">
+            <div class="arch-card-tag">Product 01 · Voice AI</div>
+            <div class="arch-card-title">AILeadCalling</div>
+            <div class="arch-card-sub">Multi-tenant AI Voice Lead-Generation Platform</div>
+          </div>
+          <div class="arch-card-body">
+
+            <div style="font-family:var(--f-body);font-size:13px;color:rgba(247,245,242,.6);line-height:1.7;margin-bottom:4px;">
+              Automates outbound and inbound calling with AI voice agents. Businesses purchase phone numbers, run campaigns, and manage leads through a web dashboard — all without human agents.
+            </div>
+
+            <div class="arch-layer">
+              <div class="arch-layer-icon" style="background:rgba(196,98,45,.15);">🎨</div>
+              <div class="arch-layer-info">
+                <div class="arch-layer-name">Frontend</div>
+                <div class="arch-layer-desc">Next.js 14 · App Router · Tailwind · ShadCN UI · Real-time analytics dashboard</div>
+              </div>
+            </div>
+
+            <div class="arch-layer">
+              <div class="arch-layer-icon" style="background:rgba(61,75,92,.2);">⚡</div>
+              <div class="arch-layer-info">
+                <div class="arch-layer-name">API / Backend</div>
+                <div class="arch-layer-desc">Next.js API Routes — webhook handlers for Telnyx (telephony) and Retell AI (voice events), campaign management, SMS orchestration</div>
+              </div>
+            </div>
+
+            <div class="arch-layer">
+              <div class="arch-layer-icon" style="background:rgba(212,168,67,.1);">🤖</div>
+              <div class="arch-layer-info">
+                <div class="arch-layer-name">AI Agent Orchestration</div>
+                <div class="arch-layer-desc">5 agents: Anna (inbound voice), Monica (outbound voice), Sophie (SMS), plus text assistants. Sentiment-based routing via Claude API. Cal.com for booking.</div>
+              </div>
+            </div>
+
+            <div class="arch-layer">
+              <div class="arch-layer-icon" style="background:rgba(45,106,79,.15);">🗄️</div>
+              <div class="arch-layer-info">
+                <div class="arch-layer-name">Data Layer</div>
+                <div class="arch-layer-desc">Supabase PostgreSQL · Row-Level Security · Multi-tenant isolation · pgvector for future AI features</div>
+              </div>
+            </div>
+
+            <div class="arch-flow">
+              <div class="arch-flow-title">Call Flow (Inbound)</div>
+              <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-text">Caller dials Telnyx number → webhook fires</div></div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-text">Next.js looks up phone → finds agent → registers with Retell AI</div></div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-text">Retell processes: Deepgram STT → GPT-4 LLM → ElevenLabs TTS</div></div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-text">Claude analyzes sentiment → routes or books via Cal.com</div></div>
+            </div>
+
+            <div class="tech-pills">
+              <span class="tech-pill">Next.js 14</span>
+              <span class="tech-pill">Supabase</span>
+              <span class="tech-pill">Retell AI</span>
+              <span class="tech-pill">Telnyx</span>
+              <span class="tech-pill">Claude API</span>
+              <span class="tech-pill">Cal.com</span>
+              <span class="tech-pill">ElevenLabs</span>
+              <span class="tech-pill">Vercel</span>
+            </div>
           </div>
         </div>
 
-        <div class="report-row" style="border-left:1px solid rgba(247,245,242,.05);border-top:1px solid rgba(247,245,242,.05);">
-          <div class="report-letter-badge" style="background:rgba(61,75,92,.3);color:var(--i-color);">I</div>
-          <div>
-            <div class="report-label">AI Directive</div>
-            <div class="report-value">Analyse dispatch logs → identify top 5 error patterns → recommend 3 AI interventions ranked by ROI and speed</div>
+        <!-- BrewongoAI -->
+        <div class="arch-card">
+          <div class="arch-card-header">
+            <div class="arch-card-tag">Product 02 · AI SaaS</div>
+            <div class="arch-card-title">BrewongoAI</div>
+            <div class="arch-card-sub">AI-Powered Blog Generation Platform</div>
+          </div>
+          <div class="arch-card-body">
+
+            <div style="font-family:var(--f-body);font-size:13px;color:rgba(247,245,242,.6);line-height:1.7;margin-bottom:4px;">
+              Multi-tenant SaaS that generates SEO-optimized blog content using AI. Users manage their blog library, prompts, and publishing — all through a clean dashboard with subscription tiers.
+            </div>
+
+            <div class="arch-layer">
+              <div class="arch-layer-icon" style="background:rgba(196,98,45,.15);">🎨</div>
+              <div class="arch-layer-info">
+                <div class="arch-layer-name">Presentation Layer</div>
+                <div class="arch-layer-desc">Next.js App Router · Rich blog UI, admin panel, subscription management, AI chat interface, shadcn/ui components</div>
+              </div>
+            </div>
+
+            <div class="arch-layer">
+              <div class="arch-layer-icon" style="background:rgba(61,75,92,.2);">🛡️</div>
+              <div class="arch-layer-info">
+                <div class="arch-layer-name">Middleware + Security</div>
+                <div class="arch-layer-desc">Auth validation, CSRF protection, rate limiting per user tier, origin checking — all before reaching business logic</div>
+              </div>
+            </div>
+
+            <div class="arch-layer">
+              <div class="arch-layer-icon" style="background:rgba(212,168,67,.1);">⚙️</div>
+              <div class="arch-layer-info">
+                <div class="arch-layer-name">Business Logic</div>
+                <div class="arch-layer-desc">Blog generation pipeline: Outline → Content → SEO optimization. Prompt management system. Subscription gating logic.</div>
+              </div>
+            </div>
+
+            <div class="arch-layer">
+              <div class="arch-layer-icon" style="background:rgba(45,106,79,.15);">🗄️</div>
+              <div class="arch-layer-info">
+                <div class="arch-layer-name">Data + Auth</div>
+                <div class="arch-layer-desc">Supabase PostgreSQL · Auth · RLS policies · Stripe for subscriptions · Upstash Redis for rate limiting</div>
+              </div>
+            </div>
+
+            <div class="arch-flow">
+              <div class="arch-flow-title">Blog Creation Flow</div>
+              <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-text">User submits topic via dashboard form</div></div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-text">Middleware: auth → rate limit → security checks</div></div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-text">Generator: outline → content → SEO → store in Supabase</div></div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-text">User sees published blog with analytics</div></div>
+            </div>
+
+            <div class="tech-pills">
+              <span class="tech-pill">Next.js 14</span>
+              <span class="tech-pill">Supabase</span>
+              <span class="tech-pill">Stripe</span>
+              <span class="tech-pill">Upstash</span>
+              <span class="tech-pill">Claude API</span>
+              <span class="tech-pill">TypeScript</span>
+              <span class="tech-pill">Vercel</span>
+            </div>
           </div>
         </div>
 
-        <div class="report-row" style="border-top:1px solid rgba(247,245,242,.05);grid-column:1/-1;">
-          <div class="report-letter-badge" style="background:rgba(45,106,79,.2);color:var(--t-color);">T</div>
-          <div>
-            <div class="report-label">Track</div>
-            <div class="report-value">Metric: Error rate per 1,000 dispatches &nbsp;·&nbsp; Review: Every Friday &nbsp;·&nbsp; Target break-even: <strong>Day 45</strong> &nbsp;·&nbsp; Outcome: <strong style="color:#6DCF8A;">38% reduction · $210K saved · ROI in 6 weeks</strong></div>
+      </div>
+    </div>
+
+    <!-- ── HOSTING ─────────────────────────────────────────────── -->
+    <div id="panel-hosting" class="panel">
+      <div class="panel-eyebrow">Self-Hosted Infrastructure</div>
+      <div class="panel-title">How I Host</div>
+      <div class="panel-sub">Multiple apps running on self-hosted Docker with reverse proxy</div>
+      <div class="accent-line"></div>
+
+      <div class="hosting-intro">
+        I run my own hosting environment using a VPS with Docker Compose and a Nginx reverse proxy. Every application gets its own container, isolated networking, and a clean subdomain — managed without touching traditional code. This is how I run n8n, internal tools, and project-specific services.
+      </div>
+
+      <!-- Stack Diagram -->
+      <div class="stack-diagram">
+        <div class="stack-title">Infrastructure Stack</div>
+
+        <div class="stack-row">
+          <div class="stack-layer-label">Internet</div>
+          <div class="stack-layer-box s-internet">🌐 &nbsp;DNS → Domain / Subdomain (app.orbitumai.com, n8n.orbitumai.com...)</div>
+        </div>
+        <div class="stack-row"><div class="stack-arrow" style="padding-left:65px;font-size:12px;">↓</div></div>
+
+        <div class="stack-row">
+          <div class="stack-layer-label">Reverse Proxy</div>
+          <div class="stack-layer-box s-proxy">🔀 &nbsp;Nginx Proxy Manager — SSL termination, subdomain routing, access control</div>
+        </div>
+        <div class="stack-row"><div class="stack-arrow" style="padding-left:65px;font-size:12px;">↓</div></div>
+
+        <div class="stack-row">
+          <div class="stack-layer-label">Container Layer</div>
+          <div class="stack-layer-box s-docker">🐳 &nbsp;Docker Compose — each app in its own isolated container on internal network</div>
+        </div>
+        <div class="stack-row"><div class="stack-arrow" style="padding-left:65px;font-size:12px;">↓</div></div>
+
+        <div class="stack-row">
+          <div class="stack-layer-label">Applications</div>
+          <div class="stack-layer-box s-app">📦 &nbsp;n8n · Custom APIs · Internal tools · Webhook receivers · Agent backends</div>
+        </div>
+      </div>
+
+      <!-- App Cards -->
+      <div class="hosting-grid">
+
+        <div class="host-card">
+          <div class="host-card-header">
+            <div class="host-icon" style="background:rgba(196,98,45,.15);">⚡</div>
+            <div>
+              <div class="host-name">n8n</div>
+              <div class="host-category">Workflow Automation</div>
+            </div>
+          </div>
+          <div class="host-desc">Self-hosted n8n instance running as my primary AI orchestration and automation engine. All workflows — AI pipelines, webhook processors, CRM integrations — run here.</div>
+          <div class="host-details">
+            <div class="host-detail"><span class="host-detail-dot"></span>Exposed via subdomain through Nginx proxy with SSL</div>
+            <div class="host-detail"><span class="host-detail-dot"></span>Persistent volume for workflow data and credentials</div>
+            <div class="host-detail"><span class="host-detail-dot"></span>Webhook endpoints publicly accessible for triggers</div>
+          </div>
+        </div>
+
+        <div class="host-card">
+          <div class="host-card-header">
+            <div class="host-icon" style="background:rgba(61,75,92,.2);">🔀</div>
+            <div>
+              <div class="host-name">Nginx Proxy Manager</div>
+              <div class="host-category">Reverse Proxy + SSL</div>
+            </div>
+          </div>
+          <div class="host-desc">The traffic controller for the entire stack. Routes incoming requests to the right container, handles SSL certificates via Let's Encrypt automatically, and manages access rules.</div>
+          <div class="host-details">
+            <div class="host-detail"><span class="host-detail-dot"></span>Auto-renewing SSL certificates per domain</div>
+            <div class="host-detail"><span class="host-detail-dot"></span>GUI-based proxy host management — no config files</div>
+            <div class="host-detail"><span class="host-detail-dot"></span>Basic auth protection for sensitive internal tools</div>
+          </div>
+        </div>
+
+        <div class="host-card">
+          <div class="host-card-header">
+            <div class="host-icon" style="background:rgba(45,106,79,.15);">🐳</div>
+            <div>
+              <div class="host-name">Docker Compose</div>
+              <div class="host-category">Container Orchestration</div>
+            </div>
+          </div>
+          <div class="host-desc">Every application is defined in a docker-compose.yml file. Start, stop, update, and rollback any service independently. Containers share an internal network but are fully isolated from each other.</div>
+          <div class="host-details">
+            <div class="host-detail"><span class="host-detail-dot"></span>Named networks for inter-container communication</div>
+            <div class="host-detail"><span class="host-detail-dot"></span>Environment variables managed via .env files</div>
+            <div class="host-detail"><span class="host-detail-dot"></span>Volumes for data persistence across restarts</div>
+          </div>
+        </div>
+
+        <div class="host-card">
+          <div class="host-card-header">
+            <div class="host-icon" style="background:rgba(212,168,67,.1);">🔧</div>
+            <div>
+              <div class="host-name">Custom AI Backends</div>
+              <div class="host-category">Agent & Webhook Services</div>
+            </div>
+          </div>
+          <div class="host-desc">Project-specific services — webhook receivers, AI agent backends, MCP servers, and internal API proxies — all deployed as lightweight Docker containers alongside the main stack.</div>
+          <div class="host-details">
+            <div class="host-detail"><span class="host-detail-dot"></span>Deployed on-demand per project requirement</div>
+            <div class="host-detail"><span class="host-detail-dot"></span>Each gets its own subdomain via Nginx routing</div>
+            <div class="host-detail"><span class="host-detail-dot"></span>Logs accessible via Docker CLI for debugging</div>
           </div>
         </div>
 
       </div>
-    </div>
 
-    <div class="brand-footer" style="margin-top:16px;">
-      <div class="logo">OrbitumAI</div>
-      <div class="url">orbitumai.com</div>
-    </div>
-
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════
-       SLIDE 4 — PITCH-XI FRAMEWORK
-  ══════════════════════════════════════════════════════ -->
-  <div class="slide bg-slate">
-
-    <div class="eyebrow">Framework 02 &nbsp;·&nbsp; Live</div>
-    <div class="slide-title">PITCH-XI™ &nbsp;<span style="font-size:.55em;font-weight:600;color:rgba(247,245,242,.4);letter-spacing:0;">The Structured Prompt Framework</span></div>
-    <div class="accent-line" style="margin:10px 0 14px;"></div>
-
-    <p class="body" style="max-width:860px;">
-      PITCH-XI is a seven-layer prompt framework that helps executives and business leaders get high-quality, actionable outputs from AI on their first attempt — without re-prompting or receiving generic results. Each layer removes a specific source of prompt failure.
-    </p>
-
-    <div class="pitch-grid">
-      <div class="pitch-layer">
-        <div class="pitch-letter">P</div>
-        <div class="pitch-label">Persona</div>
-        <div class="pitch-desc">Assigns AI a specific expert role — shifting it from generalist to specialist</div>
-      </div>
-      <div class="pitch-layer">
-        <div class="pitch-letter">I</div>
-        <div class="pitch-label">Instruction</div>
-        <div class="pitch-desc">States the precise task — a specific action with a defined deliverable</div>
-      </div>
-      <div class="pitch-layer">
-        <div class="pitch-letter">T</div>
-        <div class="pitch-label">Task Context</div>
-        <div class="pitch-desc">Provides the real business environment: size, tools, what's been tried</div>
-      </div>
-      <div class="pitch-layer">
-        <div class="pitch-letter">C</div>
-        <div class="pitch-label">Constraints</div>
-        <div class="pitch-desc">Sets explicit guardrails — what not to do, format rules, hard limits</div>
-      </div>
-      <div class="pitch-layer">
-        <div class="pitch-letter">H</div>
-        <div class="pitch-label">Hook</div>
-        <div class="pitch-desc">A reference point to calibrate against — an example of quality output</div>
-      </div>
-      <div class="pitch-layer pitch-xi">
-        <div class="pitch-letter" style="color:var(--strategy-gold);">X</div>
-        <div class="pitch-label">Execution</div>
-        <div class="pitch-desc">Defines the reasoning steps AI follows — a structured logic path</div>
-      </div>
-      <div class="pitch-layer pitch-xi">
-        <div class="pitch-letter" style="color:var(--strategy-gold);">I</div>
-        <div class="pitch-label">Intelligence</div>
-        <div class="pitch-desc">Validates output meets business-level criteria — ROI, bandwidth, feasibility</div>
+      <div style="background:rgba(45,106,79,.07);border:1px solid rgba(45,106,79,.2);border-radius:var(--r-md);padding:16px 20px;font-family:var(--f-body);font-size:13px;color:rgba(247,245,242,.6);line-height:1.65;">
+        <strong style="color:#6DCF8A;font-family:var(--f-display);font-size:12px;font-weight:700;letter-spacing:1px;">WHY SELF-HOSTED:</strong>&nbsp; Full control over data, no per-seat SaaS costs at scale, ability to run custom MCP servers and internal tools that can't live in the cloud, and the freedom to configure exactly how AI agents communicate across services.
       </div>
     </div>
 
-    <div class="two-col" style="margin-top:18px;">
-      <div>
-        <div class="col-label">Where PITCH-XI helps most</div>
-        <div class="list-item"><div class="list-dot"></div><div class="list-body"><strong>Strategy roadmaps</strong> — board-ready AI strategy in one structured prompt</div></div>
-        <div class="list-item"><div class="list-dot"></div><div class="list-body"><strong>Financial summaries</strong> — CFO-level analysis without generic output</div></div>
-        <div class="list-item"><div class="list-dot"></div><div class="list-body"><strong>Risk assessments</strong> — severity-ranked, plain-English decision briefs</div></div>
-      </div>
-      <div>
-        <div class="col-label">Who uses it</div>
-        <div class="list-item"><div class="list-dot"></div><div class="list-body"><strong>CEOs and founders</strong> at $5M–$500M companies building AI strategy</div></div>
-        <div class="list-item"><div class="list-dot"></div><div class="list-body"><strong>Senior executives</strong> who need first-prompt accuracy for high-stakes decisions</div></div>
-        <div class="list-item"><div class="list-dot"></div><div class="list-body"><strong>Consultants</strong> delivering AI strategy engagements to leadership teams</div></div>
-      </div>
-    </div>
+    <!-- ── LINKEDIN ───────────────────────────────────────────── -->
+    <div id="panel-linkedin" class="panel">
+      <div class="panel-eyebrow">Published Work</div>
+      <div class="panel-title">LinkedIn Post</div>
+      <div class="panel-sub">AILeadCalling — featured on LinkedIn</div>
+      <div class="accent-line"></div>
 
-    <div class="brand-footer">
-      <div class="logo">OrbitumAI</div>
-      <div class="url">orbitumai.com</div>
-    </div>
-
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════
-       SLIDE 5 — FORCE & BUILD (IN DEVELOPMENT)
-  ══════════════════════════════════════════════════════ -->
-  <div class="slide bg-gold">
-
-    <div class="eyebrow">Frameworks 03 &amp; 04 &nbsp;·&nbsp; In Development</div>
-    <div class="slide-title">FORCE™ &amp; BUILD™</div>
-    <div class="accent-line" style="margin:10px 0 14px;background:var(--strategy-gold);"></div>
-
-    <div class="two-col" style="margin-top:0;gap:24px;">
-
-      <!-- FORCE -->
-      <div style="display:flex;flex-direction:column;gap:0;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="font-family:var(--f-display);font-size:22px;font-weight:800;color:var(--founder-white);">FORCE™</div>
-          <span class="status-pill pill-dev"><span class="dot-dev"></span>In Development</span>
-        </div>
-        <div style="font-family:var(--f-accent);font-style:italic;font-size:13px;color:var(--strategy-gold);margin-bottom:12px;">The Workforce Transformation Methodology Built for the AI Era</div>
-        <p class="body" style="font-size:13px;">
-          FORCE is an enterprise workforce transformation methodology that solves the gap between transformation plan and transformation reality — powered by an AI-agent diagnostic platform built for the Head of Strategy and Transformation.
-        </p>
-        <div class="list-item" style="margin-top:14px;"><div class="list-dot" style="background:var(--strategy-gold);margin-top:6px;"></div><div class="list-body" style="font-size:13px;"><strong>F — Future State:</strong> Define the workforce your organization needs to compete in an AI-driven world</div></div>
-        <div class="list-item"><div class="list-dot" style="background:var(--strategy-gold);margin-top:6px;"></div><div class="list-body" style="font-size:13px;"><strong>O — Organization Shape:</strong> Map current structure, roles, and capabilities against the future requirement</div></div>
-        <div class="list-item"><div class="list-dot" style="background:var(--strategy-gold);margin-top:6px;"></div><div class="list-body" style="font-size:13px;"><strong>R — Readiness Gap · C — Capability Build · E — Execution Plan:</strong> Diagnose, build, and deploy transformation at enterprise scale</div></div>
-        <div class="dev-block">
-          Target audience: Head of Strategy / Transformation, enterprise &amp; mid-market organizations.<br>
-          <strong style="color:var(--strategy-gold);">Available later in 2025.</strong>
+      <div class="li-hero">
+        <div class="li-icon">💼</div>
+        <div class="li-content">
+          <div class="li-eyebrow">LinkedIn · AI Voice Agent</div>
+          <div class="li-title">AILeadCalling: An AI-Powered Voice Agent Platform</div>
+          <div class="li-desc">I published a post walking through how I built an AI voice agent platform from scratch — no traditional coding, just prompt engineering, n8n, and smart integrations. It covers the architecture, the agent orchestration system, and the vision behind automating lead conversations at scale.</div>
+          <a class="li-btn" href="https://www.linkedin.com/posts/shuv_aileadcalling-an-ai-powered-voice-agent-activity-7431850032406089728-7pyt?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAD8s-QBJLeXJBRRnNazn6Gsj9pHJ6PTxLA" target="_blank">View Post on LinkedIn ↗</a>
         </div>
       </div>
 
-      <!-- BUILD -->
-      <div style="display:flex;flex-direction:column;gap:0;border-left:1px solid rgba(247,245,242,.07);padding-left:24px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <div style="font-family:var(--f-display);font-size:22px;font-weight:800;color:var(--founder-white);">BUILD™</div>
-          <span class="status-pill pill-dev"><span class="dot-dev"></span>In Development</span>
+      <div class="li-cards">
+        <div class="li-card">
+          <div class="li-card-icon">🎙️</div>
+          <div class="li-card-title">AI Voice Agents</div>
+          <div class="li-card-body">Built inbound and outbound calling agents using Retell AI + Telnyx — handling real conversations, sentiment analysis, and calendar booking automatically.</div>
         </div>
-        <div style="font-family:var(--f-accent);font-style:italic;font-size:13px;color:var(--strategy-gold);margin-bottom:12px;">The No-Code AI Product Builder Framework</div>
-        <p class="body" style="font-size:13px;">
-          BUILD is a step-by-step methodology for non-technical founders and business leaders who want to create AI-powered products and workflows using only no-code tools.
-        </p>
-        <div class="list-item" style="margin-top:14px;"><div class="list-dot" style="background:var(--strategy-gold);margin-top:6px;"></div><div class="list-body" style="font-size:13px;">Covers five stages: <strong>Blueprint → Understand → Implement → Launch → Drive Results</strong></div></div>
-        <div class="list-item"><div class="list-dot" style="background:var(--strategy-gold);margin-top:6px;"></div><div class="list-body" style="font-size:13px;">Replaces the dependency on developer teams with a <strong>structured no-code process</strong> any leader can follow</div></div>
-        <div class="list-item"><div class="list-dot" style="background:var(--strategy-gold);margin-top:6px;"></div><div class="list-body" style="font-size:13px;">Takes a founder from <strong>idea to first revenue</strong> in 3–4 weeks without writing code</div></div>
-        <div class="dev-block">
-          Target audience: Non-technical founders and SMB owners building AI products.<br>
-          <strong style="color:var(--strategy-gold);">Available later in 2025.</strong>
+        <div class="li-card">
+          <div class="li-card-icon">🏗️</div>
+          <div class="li-card-title">No-Code Architecture</div>
+          <div class="li-card-body">The entire platform was built without traditional development — proving that prompt engineering and no-code tools can produce enterprise-grade AI products.</div>
+        </div>
+        <div class="li-card">
+          <div class="li-card-icon">🚀</div>
+          <div class="li-card-title">Multi-Tenant SaaS</div>
+          <div class="li-card-body">Full org management, phone number purchasing, campaign analytics, CRM integrations — a complete AI calling solution built for marketing agencies and enterprises.</div>
         </div>
       </div>
 
-    </div>
-
-    <div class="brand-footer">
-      <div class="logo">OrbitumAI</div>
-      <div class="url">orbitumai.com</div>
-    </div>
-
-  </div>
-
-  <!-- ══════════════════════════════════════════════════════
-       SLIDE 6 — SUITE OVERVIEW
-  ══════════════════════════════════════════════════════ -->
-  <div class="slide bg-cream">
-
-    <div class="eyebrow">The Full Picture</div>
-    <div class="slide-title">Four Frameworks. One Operating System.</div>
-    <div class="accent-line" style="margin:10px 0 16px;"></div>
-
-    <div class="fw-grid">
-
-      <div class="fw-card" style="border-color:rgba(196,98,45,.25);">
-        <div class="fw-card-top">
-          <div>
-            <div style="font-family:var(--f-display);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--warm-ember);margin-bottom:6px;">Framework 01</div>
-            <div class="fw-name">ORBIT™</div>
-          </div>
-          <span class="status-pill pill-live"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="fw-tagline">The Business AI Operating Framework</div>
-        <div class="fw-body">A five-step system — Outcome, Revenue Lever, Bottleneck, Instruct, Track — that connects AI use to measurable business results. Used for strategy sessions, consulting engagements, and team enablement.</div>
+      <div style="margin-top:32px;padding-top:28px;border-top:1px solid rgba(247,245,242,.06);display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:var(--f-display);font-size:13px;font-weight:700;color:var(--warm-ember);">OrbitumAI</div>
+        <a href="https://orbitumai.com" target="_blank" style="font-family:var(--f-body);font-size:12px;color:rgba(247,245,242,.3);text-decoration:none;transition:color .15s;" onmouseover="this.style.color='var(--strategy-gold)'" onmouseout="this.style.color='rgba(247,245,242,.3)'">orbitumai.com ↗</a>
+        <div style="font-family:var(--f-accent);font-style:italic;font-size:12px;color:rgba(212,168,67,.5);">AI Consultant · Dallas, TX</div>
       </div>
-
-      <div class="fw-card" style="border-color:rgba(212,168,67,.2);">
-        <div class="fw-card-top">
-          <div>
-            <div style="font-family:var(--f-display);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--strategy-gold);margin-bottom:6px;">Framework 02</div>
-            <div class="fw-name">PITCH-XI™</div>
-          </div>
-          <span class="status-pill pill-live"><span class="dot-live"></span>Live</span>
-        </div>
-        <div class="fw-tagline" style="color:var(--strategy-gold);">The Structured Prompt Framework</div>
-        <div class="fw-body">A seven-layer prompt system — Persona, Instruction, Task Context, Constraints, Hook, Execution, Intelligence — that delivers board-ready AI outputs on the first attempt, without re-prompting.</div>
-      </div>
-
-      <div class="fw-card" style="border-color:rgba(61,75,92,.4);opacity:.85;">
-        <div class="fw-card-top">
-          <div>
-            <div style="font-family:var(--f-display);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--slate);margin-bottom:6px;">Framework 03</div>
-            <div class="fw-name" style="color:rgba(247,245,242,.6);">FORCE™</div>
-          </div>
-          <span class="status-pill pill-dev"><span class="dot-dev"></span>In Development</span>
-        </div>
-        <div class="fw-tagline" style="color:rgba(212,168,67,.6);">The Workforce Transformation Methodology Built for the AI Era</div>
-        <div class="fw-body" style="color:rgba(247,245,242,.4);">A 5-dimension enterprise methodology — Future State, Organization Shape, Readiness Gap, Capability Build, Execution Plan — that bridges the gap between transformation plan and transformation reality. Built for Heads of Strategy and Transformation.</div>
-      </div>
-
-      <div class="fw-card" style="border-color:rgba(61,75,92,.4);opacity:.85;">
-        <div class="fw-card-top">
-          <div>
-            <div style="font-family:var(--f-display);font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--slate);margin-bottom:6px;">Framework 04</div>
-            <div class="fw-name" style="color:rgba(247,245,242,.6);">BUILD™</div>
-          </div>
-          <span class="status-pill pill-dev"><span class="dot-dev"></span>In Development</span>
-        </div>
-        <div class="fw-tagline" style="color:rgba(212,168,67,.6);">The No-Code AI Product Builder</div>
-        <div class="fw-body" style="color:rgba(247,245,242,.4);">A step-by-step product creation methodology for non-technical founders — from idea to first revenue in 3–4 weeks using no-code tools, AI assistants, and a structured validation process.</div>
-      </div>
-
     </div>
 
-    <div style="margin-top:16px;text-align:center;">
-      <div style="font-family:var(--f-accent);font-style:italic;font-size:clamp(13px,1.4vw,16px);color:rgba(247,245,242,.35);">"The problem is not the AI. The problem is the method."</div>
-    </div>
-
-    <div class="brand-footer">
-      <div class="logo">OrbitumAI</div>
-      <div style="font-family:var(--f-accent);font-style:italic;font-size:12px;color:rgba(212,168,67,.6);">Strategy First. Prompt Second. Results Always.</div>
-      <div class="url">orbitumai.com</div>
-    </div>
-
-  </div>
-
-</div><!-- /deck -->
-
-<!-- ─── NAVIGATION ─────────────────────────────────────── -->
-<div class="nav">
-  <button class="nav-btn" onclick="go(-1)">←</button>
-  <div class="nav-dots" id="dots"></div>
-  <div class="nav-label" id="navLabel">1 / 6</div>
-  <button class="nav-btn" onclick="go(1)">→</button>
+  </main>
 </div>
 
 <script>
-const slides = document.querySelectorAll('.slide');
-const dotsEl  = document.getElementById('dots');
-const navLbl  = document.getElementById('navLabel');
-const slideNum = document.getElementById('slideNum');
-const N = slides.length;
-let cur = 0;
-
-/* build dots */
-for (let i = 0; i < N; i++) {
-  const d = document.createElement('div');
-  d.className = 'ndot' + (i === 0 ? ' active' : '');
-  d.onclick = () => goTo(i);
-  dotsEl.appendChild(d);
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  // find and activate the clicked nav item
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'" + id + "'")) {
+      n.classList.add('active');
+    }
+  });
+  // scroll main back to top
+  document.querySelector('.main').scrollTop = 0;
 }
-
-function goTo(n) {
-  slides[cur].classList.remove('active');
-  dotsEl.children[cur].classList.remove('active');
-  cur = (n + N) % N;
-  slides[cur].classList.add('active');
-  dotsEl.children[cur].classList.add('active');
-  const lbl = String(cur + 1).padStart(2,'0') + ' / ' + String(N).padStart(2,'0');
-  navLbl.textContent = (cur + 1) + ' / ' + N;
-  slideNum.textContent = lbl;
-}
-function go(dir) { goTo(cur + dir); }
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
-  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   go(-1);
-});
-
-/* touch swipe */
-let tx = 0;
-document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; });
-document.addEventListener('touchend',   e => {
-  const dx = e.changedTouches[0].clientX - tx;
-  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
-});
 </script>
 </body>
 </html>
