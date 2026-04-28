@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>OrbitumAI · Private LLM Playbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0D0D;
+    --bg-soft: #0a0a0a;
+    --bg-card: #111111;
+    --ink: #F7F5F2;
+    --ink-dim: rgba(247,245,242,.55);
+    --ink-faint: rgba(247,245,242,.25);
+    --accent: #C4622D;
+    --accent-dim: #b5571f;
+    --danger: #ef4444;
+    --warn: #D4A843;
+    --ok: #2D6A4F;
+    --border: rgba(247,245,242,.08);
+    --border-bright: rgba(247,245,242,.15);
+    --display: 'Plus Jakarta Sans', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.04;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* SIDEBAR NAV */
+  aside {
+    border-right: 1px solid var(--border);
+    background: var(--bg-soft);
+    padding: 32px 24px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .brand {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    line-height: 1;
+  }
+  .brand span { color: var(--accent); }
+
+  .tagline {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 40px;
+  }
+
+  .nav-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin: 28px 0 10px;
+    padding-left: 8px;
+  }
+  .nav-label:first-of-type { margin-top: 0; }
+
+  nav ul { list-style: none; }
+  nav a {
+    display: block;
+    padding: 8px 12px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-left: 2px solid transparent;
+    transition: all 0.15s ease;
+  }
+  nav a:hover {
+    color: var(--ink);
+    border-left-color: var(--accent);
+    background: rgba(212, 255, 58, 0.04);
+  }
+  nav a .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-right: 10px;
+  }
+
+  /* MAIN */
+  main {
+    padding: 64px 80px 120px;
+    max-width: 1100px;
+  }
+
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+  }
+  .header-meta .dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    margin-right: 8px;
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  h1.title {
+    font-family: var(--display);
+    font-size: clamp(48px, 6vw, 88px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+    margin-bottom: 24px;
+  }
+  h1.title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 20px;
+    color: var(--ink-dim);
+    max-width: 640px;
+    line-height: 1.5;
+    margin-bottom: 48px;
+  }
+
+  /* SECTION */
+  section {
+    margin: 80px 0;
+    scroll-margin-top: 20px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+  h2 {
+    font-family: var(--display);
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+  }
+
+  h3 {
+    font-family: var(--body);
+    font-size: 20px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    letter-spacing: -0.01em;
+  }
+
+  p { margin-bottom: 16px; color: #c5cacd; }
+  p.lead { font-size: 18px; color: var(--ink); }
+
+  strong { color: var(--ink); font-weight: 600; }
+  em.accent { font-style: normal; color: var(--accent); font-weight: 600; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    background: var(--bg-card);
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    margin: 16px 0;
+  }
+  .card.warn {
+    border-left: 3px solid var(--warn);
+    background: linear-gradient(90deg, rgba(255,179,71,0.06) 0%, var(--bg-card) 40%);
+  }
+  .card.danger {
+    border-left: 3px solid var(--danger);
+    background: linear-gradient(90deg, rgba(255,107,74,0.06) 0%, var(--bg-card) 40%);
+  }
+  .card.ok {
+    border-left: 3px solid var(--accent);
+    background: linear-gradient(90deg, rgba(212,255,58,0.04) 0%, var(--bg-card) 40%);
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 10px;
+    color: var(--ink-faint);
+  }
+  .card.warn .card-label { color: var(--warn); }
+  .card.danger .card-label { color: var(--danger); }
+  .card.ok .card-label { color: var(--accent); }
+
+  /* STEPS */
+  .step {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 24px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border);
+  }
+  .step:last-child { border-bottom: 1px solid var(--border); }
+  .step-num {
+    font-family: var(--display);
+    font-size: 44px;
+    font-weight: 900;
+    color: var(--accent);
+    line-height: 1;
+    font-style: italic;
+  }
+  .step-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .step-body { color: #b5babd; font-size: 15px; }
+  .step-cmd {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 4px;
+    margin-top: 10px;
+    color: var(--accent);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* TABLE */
+  .table-wrap {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    background: var(--bg-soft);
+    text-align: left;
+    padding: 14px 18px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    color: #b5babd;
+  }
+  tr:last-child td { border-bottom: none; }
+  td.cost { font-family: var(--mono); color: var(--accent); font-weight: 500; }
+  td.mono { font-family: var(--mono); font-size: 13px; }
+
+  /* COMPARISON */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .compare .card { margin: 0; }
+
+  /* BIG NUMBER */
+  .big-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 32px 0;
+  }
+  .stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: 8px;
+  }
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  .stat-value {
+    font-family: var(--display);
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+  .stat-value span { color: var(--accent); }
+  .stat-sub {
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin-top: 6px;
+    font-family: var(--mono);
+  }
+
+  /* CHECKLIST */
+  ul.checklist {
+    list-style: none;
+    margin: 16px 0;
+  }
+  ul.checklist li {
+    padding: 10px 0 10px 32px;
+    position: relative;
+    color: #b5babd;
+    border-bottom: 1px dashed var(--border);
+  }
+  ul.checklist li:last-child { border-bottom: none; }
+  ul.checklist li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-weight: 700;
+  }
+  ul.checklist li.done::before { content: '✓'; }
+  ul.checklist li.warn::before { content: '!'; color: var(--warn); }
+  ul.checklist li.bad::before { content: '✗'; color: var(--danger); }
+
+  /* CTA / Bottom */
+  .cta {
+    margin: 80px 0 0;
+    padding: 48px;
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-soft) 100%);
+    border: 1px solid var(--border-bright);
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta::after {
+    content: 'OrbitumAI';
+    position: absolute;
+    right: -30px;
+    bottom: -40px;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 180px;
+    color: var(--border);
+    line-height: 1;
+    pointer-events: none;
+    font-style: italic;
+  }
+  .cta h2 { font-size: 32px; margin-bottom: 12px; position: relative; z-index: 2;}
+  .cta p { position: relative; z-index: 2; }
+
+  /* PULL QUOTE */
+  .pull {
+    font-family: var(--display);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.3;
+    font-weight: 400;
+    color: var(--ink);
+    padding: 32px 0 32px 32px;
+    border-left: 3px solid var(--accent);
+    margin: 40px 0;
+    max-width: 780px;
+    letter-spacing: -0.015em;
+  }
+  .pull cite {
+    display: block;
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 11px;
+    color: var(--ink-faint);
+    margin-top: 14px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* DIAGRAM-ish ASCII */
+  .ascii {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 13px;
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.5;
+    color: var(--ink-dim);
+    margin: 16px 0;
+  }
+  .ascii .a { color: var(--accent); }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    aside { position: relative; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    main { padding: 40px 24px 80px; }
+    .big-stats { grid-template-columns: 1fr; }
+    .compare { grid-template-columns: 1fr; }
+    h1.title { font-size: 48px; }
+  }
+</style>
+</head>
+<body>
+<a href="../index.html" style="position:fixed;top:16px;right:20px;z-index:99999;display:inline-flex;align-items:center;gap:7px;background:#C4622D;color:#F7F5F2;font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;padding:9px 18px;border-radius:8px;text-decoration:none;letter-spacing:.3px;box-shadow:0 4px 16px rgba(196,98,45,.35);transition:background .18s;" onmouseover="this.style.background='#b5571f'" onmouseout="this.style.background='#C4622D'">← Back to Home</a>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="brand">Orbitum<span>AI</span>.</div>
+    <div class="tagline">Private LLM · Playbook v1</div>
+
+    <div class="nav-label">Strategy</div>
+    <nav>
+      <ul>
+        <li><a href="#objective"><span class="num">01</span>Objective</a></li>
+        <li><a href="#architecture"><span class="num">02</span>Architecture</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-label">Build</div>
+    <nav>
+      <ul>
+        <li><a href="#setup"><span class="num">03</span>Step-by-step Setup</a></li>
+        <li><a href="#stack"><span class="num">04</span>Software Stack</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-label">Numbers</div>
+    <nav>
+      <ul>
+        <li><a href="#costs"><span class="num">05</span>Monthly Cost</a></li>
+        <li><a href="#pricing"><span class="num">06</span>Pricing &amp; Margin</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-label">Sell</div>
+    <nav>
+      <ul>
+        <li><a href="#offer"><span class="num">07</span>The Offer</a></li>
+        <li><a href="#first-client"><span class="num">08</span>First Paying Client</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav-label">Grow</div>
+    <nav>
+      <ul>
+        <li><a href="#upgrade"><span class="num">09</span>Upgrade Path</a></li>
+        <li><a href="#avoid"><span class="num">10</span>What to Avoid</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+    <div class="header-meta">
+      <span><span class="dot"></span>STATUS: MVP-READY</span>
+      <span>BUDGET: &lt; $100/MO</span>
+      <span>TIME TO SHIP: 7 DAYS</span>
+    </div>
+
+    <h1 class="title">Ship private LLMs.<br><em>Bleed no cash.</em></h1>
+    <p class="subtitle">
+      A bootstrapper's blueprint for OrbitumAI — deploy a sellable private LLM service on AWS for under $100/month of fixed cost. No Kubernetes. No over-engineering. Just the shortest path from EC2 to first invoice.
+    </p>
+
+    <!-- 01 -->
+    <section id="objective">
+      <div class="section-header">
+        <span class="section-num">§ 01</span>
+        <h2>Objective</h2>
+      </div>
+
+      <p class="lead">
+        Build a <strong>low-cost private LLM hosting service</strong> that companies pay for because their data never leaves their container. Sell peace of mind, not model benchmarks.
+      </p>
+
+      <div class="big-stats">
+        <div class="stat">
+          <div class="stat-label">Target infra cost</div>
+          <div class="stat-value"><span>$80</span>/mo</div>
+          <div class="stat-sub">Per dedicated client instance</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Target price</div>
+          <div class="stat-value"><span>$499</span>/mo</div>
+          <div class="stat-sub">Entry tier — 6× margin minimum</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Break-even</div>
+          <div class="stat-value"><span>1</span> client</div>
+          <div class="stat-sub">Covers all your infra + beer</div>
+        </div>
+      </div>
+
+      <div class="pull">
+        "You are not selling GPUs. You are selling the right for a CFO to sleep at night."
+        <cite>— OrbitumAI Founder's Memo</cite>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section id="architecture">
+      <div class="section-header">
+        <span class="section-num">§ 02</span>
+        <h2>Cheapest working architecture</h2>
+      </div>
+
+      <p>
+        One EC2 instance. One model. One FastAPI. Done. No load balancers, no Kubernetes, no service mesh. You add complexity <strong>only</strong> when a paying customer asks for it.
+      </p>
+
+      <div class="ascii">
+<span class="a">┌─────────────────────────────────────────────────┐</span>
+<span class="a">│</span>  Client App  ──▶  HTTPS (Cloudflare / Caddy)    <span class="a">│</span>
+<span class="a">│</span>                      │                           <span class="a">│</span>
+<span class="a">│</span>                      ▼                           <span class="a">│</span>
+<span class="a">│</span>         ┌──────────────────────────┐            <span class="a">│</span>
+<span class="a">│</span>         │  EC2  (g4dn.xlarge / CPU) │            <span class="a">│</span>
+<span class="a">│</span>         │  ├─ FastAPI (auth + route) │            <span class="a">│</span>
+<span class="a">│</span>         │  ├─ Ollama / vLLM          │            <span class="a">│</span>
+<span class="a">│</span>         │  └─ Llama 3.1 8B · 4-bit   │            <span class="a">│</span>
+<span class="a">│</span>         └──────────────────────────┘            <span class="a">│</span>
+<span class="a">│</span>                      │                           <span class="a">│</span>
+<span class="a">│</span>                      ▼                           <span class="a">│</span>
+<span class="a">│</span>                   S3 (logs, optional RAG docs)   <span class="a">│</span>
+<span class="a">└─────────────────────────────────────────────────┘</span>
+      </div>
+
+      <h3>Why this stack is ruthless on cost</h3>
+      <ul class="checklist">
+        <li class="done"><strong>Single EC2.</strong> No ALB ($18/mo), no NAT gateway ($33/mo), no RDS, no EKS control plane ($73/mo).</li>
+        <li class="done"><strong>Ollama on one box.</strong> One binary, one model file, no orchestration overhead.</li>
+        <li class="done"><strong>4-bit quantized 8B model.</strong> Fits in ~6GB VRAM or ~8GB RAM. Runs on the cheapest usable GPU, or CPU for MVP.</li>
+        <li class="done"><strong>Cloudflare for HTTPS.</strong> Free cert, free DDoS, free caching. No ACM + ALB bill.</li>
+        <li class="done"><strong>Auto-stop when idle.</strong> CloudWatch + Lambda shuts the box off after X minutes of no traffic.</li>
+      </ul>
+
+      <div class="compare">
+        <div class="card ok">
+          <div class="card-label">✓ Start with this</div>
+          <p><strong>g4dn.xlarge</strong> — 1× T4 GPU, 4 vCPU, 16GB RAM. Comfortably runs a 4-bit 8B model at decent speed. ~$0.53/hr on-demand, ~$0.16/hr spot.</p>
+        </div>
+        <div class="card danger">
+          <div class="card-label">✗ Do NOT start with</div>
+          <p><strong>p4d / p5 / H100 instances</strong> — $3–$35/hr. You will burn through a pre-seed round before your first demo call. Avoid until a client specifically pays for throughput.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section id="setup">
+      <div class="section-header">
+        <span class="section-num">§ 03</span>
+        <h2>Step-by-step setup</h2>
+      </div>
+
+      <p>Do these in order. Each step is under 30 minutes. Total: one focused weekend.</p>
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div>
+          <div class="step-title">Lock down the AWS account</div>
+          <div class="step-body">Create account → enable MFA on root → create IAM admin user → set a Budget alert at $50 and $100. If you skip budgets, you will get a surprise bill. This takes 10 minutes and saves rent.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div>
+          <div class="step-title">Launch one EC2 instance</div>
+          <div class="step-body">Region: <code>us-east-1</code>. AMI: Ubuntu 22.04. Instance: <code>g4dn.xlarge</code> (spot pricing). Storage: 50GB gp3. Security group: ports 22 + 443 only.</div>
+          <div class="step-cmd">$ aws ec2 run-instances --instance-type g4dn.xlarge --instance-market-options 'MarketType=spot'</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div>
+          <div class="step-title">Install Ollama + model</div>
+          <div class="step-body">Ollama is the simplest serving layer. One command to install, one command to pull a quantized model.</div>
+          <div class="step-cmd">$ curl -fsSL https://ollama.com/install.sh | sh &amp;&amp; ollama pull llama3.1:8b-instruct-q4_K_M</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">04</div>
+        <div>
+          <div class="step-title">Wrap it in a FastAPI</div>
+          <div class="step-body">~40 lines of Python. Receives a prompt, checks the API key against a dict or DynamoDB, forwards to Ollama on <code>localhost:11434</code>, returns response, logs token count to a file or CloudWatch.</div>
+          <div class="step-cmd">$ pip install fastapi uvicorn httpx &amp;&amp; uvicorn app:api --host 0.0.0.0 --port 8000</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">05</div>
+        <div>
+          <div class="step-title">Put Cloudflare in front</div>
+          <div class="step-body">Point <code>api.orbitumai.com</code> at the EC2 elastic IP. Cloudflare gives free HTTPS, DDoS protection, WAF, and hides your origin IP. Costs zero.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">06</div>
+        <div>
+          <div class="step-title">Add idle auto-stop</div>
+          <div class="step-body">CloudWatch alarm: if EC2 network out &lt; 1KB for 30 min → trigger Lambda → stop instance. Client wakes it back up via a "warm up" endpoint. Saves 60–80% of compute cost in early months.</div>
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">07</div>
+        <div>
+          <div class="step-title">Ship API keys via a one-pager</div>
+          <div class="step-body">Notion or a Carrd page with: endpoint URL, example curl, pricing table, "Book a call" button. That's your entire product surface for the first 5 clients.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 -->
+    <section id="stack">
+      <div class="section-header">
+        <span class="section-num">§ 04</span>
+        <h2>Software stack, at a glance</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Layer</th>
+              <th>Pick</th>
+              <th>Why</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Compute</strong></td>
+              <td class="mono">EC2 g4dn.xlarge (spot)</td>
+              <td>Cheapest usable GPU on AWS</td>
+            </tr>
+            <tr>
+              <td><strong>Serving</strong></td>
+              <td class="mono">Ollama</td>
+              <td>Zero-config. Upgrade to vLLM only if throughput becomes a bottleneck.</td>
+            </tr>
+            <tr>
+              <td><strong>Model</strong></td>
+              <td class="mono">Llama 3.1 8B · 4-bit</td>
+              <td>Fits on T4, good quality, Apache-friendly license</td>
+            </tr>
+            <tr>
+              <td><strong>API</strong></td>
+              <td class="mono">FastAPI + Uvicorn</td>
+              <td>Auth, logging, rate limit in one file</td>
+            </tr>
+            <tr>
+              <td><strong>Edge / SSL</strong></td>
+              <td class="mono">Cloudflare (free tier)</td>
+              <td>Free HTTPS, WAF, hides origin</td>
+            </tr>
+            <tr>
+              <td><strong>Auth</strong></td>
+              <td class="mono">Static API keys</td>
+              <td>Cognito only when you have 10+ clients</td>
+            </tr>
+            <tr>
+              <td><strong>Storage</strong></td>
+              <td class="mono">S3 (logs only)</td>
+              <td>Skip RDS. DynamoDB only if truly needed.</td>
+            </tr>
+            <tr>
+              <td><strong>Monitoring</strong></td>
+              <td class="mono">CloudWatch (free tier)</td>
+              <td>Skip Datadog until revenue &gt; $5k/mo</td>
+            </tr>
+            <tr>
+              <td><strong>Billing</strong></td>
+              <td class="mono">Stripe Payment Links</td>
+              <td>No coding. Send a link, get paid.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 05 -->
+    <section id="costs">
+      <div class="section-header">
+        <span class="section-num">§ 05</span>
+        <h2>Monthly cost estimate</h2>
+      </div>
+
+      <p>Real numbers, assuming one <code>g4dn.xlarge</code> on spot running ~40% of the month (auto-stop when idle). Prices are rough AWS public pricing — always verify in your region.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Assumption</th>
+              <th>Monthly</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>EC2 g4dn.xlarge (spot)</td>
+              <td>~$0.16/hr × 300 hrs</td>
+              <td class="cost">$48</td>
+            </tr>
+            <tr>
+              <td>EBS gp3 storage</td>
+              <td>50GB</td>
+              <td class="cost">$4</td>
+            </tr>
+            <tr>
+              <td>Data transfer out</td>
+              <td>~20GB</td>
+              <td class="cost">$2</td>
+            </tr>
+            <tr>
+              <td>S3 (logs)</td>
+              <td>5GB</td>
+              <td class="cost">$1</td>
+            </tr>
+            <tr>
+              <td>CloudWatch</td>
+              <td>Free tier</td>
+              <td class="cost">$0</td>
+            </tr>
+            <tr>
+              <td>Cloudflare</td>
+              <td>Free plan</td>
+              <td class="cost">$0</td>
+            </tr>
+            <tr>
+              <td>Elastic IP</td>
+              <td>Attached</td>
+              <td class="cost">$0</td>
+            </tr>
+            <tr>
+              <td>Route 53 hosted zone</td>
+              <td>1 domain</td>
+              <td class="cost">$0.50</td>
+            </tr>
+            <tr>
+              <td><strong>TOTAL per client instance</strong></td>
+              <td><strong>Early-stage reality</strong></td>
+              <td class="cost"><strong>~$56/mo</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card warn">
+        <div class="card-label">⚠ GPU cost warning</div>
+        <p>Spot instances can be reclaimed with a 2-minute warning. For paying clients with SLAs, switch the tier to on-demand (≈ $0.53/hr ≈ $160/mo for 300 hrs running). Bake this into your pricing — still easy 3× margin at $499/mo.</p>
+      </div>
+
+      <div class="card danger">
+        <div class="card-label">✗ What NOT to do this month</div>
+        <p>Do not provision: RDS, ElastiCache, ALB, NAT Gateway, EKS, SageMaker, Bedrock Provisioned Throughput. Each one adds $30–$500/mo and solves a problem you don't have yet.</p>
+      </div>
+    </section>
+
+    <!-- 06 -->
+    <section id="pricing">
+      <div class="section-header">
+        <span class="section-num">§ 06</span>
+        <h2>How to price it (vs cost margin)</h2>
+      </div>
+
+      <p class="lead">Rule of thumb: <em class="accent">price ≥ 3× infra cost.</em> You are the mechanic, the liability buffer, and the only person the CFO can call. Charge accordingly.</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tier</th>
+              <th>What they get</th>
+              <th>Price / mo</th>
+              <th>Your cost</th>
+              <th>Margin</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Starter</strong></td>
+              <td>Shared instance, 1M tokens/mo, API only</td>
+              <td class="cost">$499</td>
+              <td class="mono">~$60</td>
+              <td class="mono">8×</td>
+            </tr>
+            <tr>
+              <td><strong>Private</strong></td>
+              <td>Dedicated EC2, unlimited tokens, their VPC</td>
+              <td class="cost">$1,499</td>
+              <td class="mono">~$180</td>
+              <td class="mono">8×</td>
+            </tr>
+            <tr>
+              <td><strong>Secure</strong></td>
+              <td>Dedicated + audit logs, SSO, BAA, SLA 99%</td>
+              <td class="cost">$3,999</td>
+              <td class="mono">~$350</td>
+              <td class="mono">11×</td>
+            </tr>
+            <tr>
+              <td><strong>Enterprise</strong></td>
+              <td>Deployed in their AWS account, you operate</td>
+              <td class="cost">$7,500+</td>
+              <td class="mono">~0 (they pay)</td>
+              <td class="mono">∞</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card ok">
+        <div class="card-label">✓ The Enterprise tier is the grail</div>
+        <p>"Deployed in their AWS" means <strong>they pay the AWS bill, you charge a flat ops fee.</strong> Zero infra risk on your side. Most mid-market companies prefer this anyway — their compliance team insists on it.</p>
+      </div>
+    </section>
+
+    <!-- 07 -->
+    <section id="offer">
+      <div class="section-header">
+        <span class="section-num">§ 07</span>
+        <h2>The offer (pick one and lead with it)</h2>
+      </div>
+
+      <p>Generic "private LLM hosting" doesn't sell. A specific offer to a specific buyer sells. Pick <strong>one</strong> of these to open with:</p>
+
+      <div class="compare">
+        <div class="card">
+          <div class="card-label">Offer A</div>
+          <h3 style="margin-top:0">Private ChatGPT for your company</h3>
+          <p>One-line pitch: <em class="accent">"ChatGPT that never sends your data to OpenAI, hosted in your AWS, live in a week."</em></p>
+          <p>Buyer: IT director at a 50–500 person company worried about ChatGPT data leaks. Price: $1,499/mo.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Offer B</div>
+          <h3 style="margin-top:0">Secure AI for internal docs</h3>
+          <p>One-line pitch: <em class="accent">"Upload your SOPs, contracts, policies. Your team queries them. Nothing leaves your tenant."</em></p>
+          <p>Buyer: Ops or Legal ops at a regulated SMB (healthcare, finance, law). Price: $3,999/mo.</p>
+        </div>
+      </div>
+
+      <p>Both are the same backend. Only the <strong>landing page, demo, and contract</strong> differ. That's the leverage.</p>
+    </section>
+
+    <!-- 08 -->
+    <section id="first-client">
+      <div class="section-header">
+        <span class="section-num">§ 08</span>
+        <h2>Fastest path to first paying client</h2>
+      </div>
+
+      <p>In the order that actually works for bootstrapped founders:</p>
+
+      <ul class="checklist">
+        <li><strong>List 30 target companies</strong> — SMBs, 50–500 employees, in one vertical (legal, healthcare ops, accounting firms are ideal: paranoid about data, not tech-savvy enough to build it themselves).</li>
+        <li><strong>Record a 3-minute Loom demo</strong> of your private LLM answering a question with "internal company data." Generic enough to reuse, specific enough to feel real.</li>
+        <li><strong>Send 10 cold emails/day</strong> with the Loom link and a single line: "I build private ChatGPT deployments. 15 min this week?"</li>
+        <li><strong>First call = discovery only.</strong> No pitch. Ask what they currently do with AI and what the security team says about it. Their answer is your sales script.</li>
+        <li><strong>Offer a $500 one-week paid pilot</strong> instead of a free trial. Paid pilots close. Free trials ghost.</li>
+        <li><strong>At the end of week: convert to monthly or walk.</strong> If they won't pay after a working pilot, they were never going to. Move on.</li>
+      </ul>
+
+      <div class="card ok">
+        <div class="card-label">✓ Target: first dollar in 30 days</div>
+        <p>Not first customer. <strong>First dollar.</strong> A $500 pilot fee in your Stripe dashboard in the first month is the only validation that matters. Everything else is theater.</p>
+      </div>
+    </section>
+
+    <!-- 09 -->
+    <section id="upgrade">
+      <div class="section-header">
+        <span class="section-num">§ 09</span>
+        <h2>Upgrade path (only when it pays for itself)</h2>
+      </div>
+
+      <p>Do not upgrade anything until a client is paying for the pain the upgrade solves. Then do exactly one of these:</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Trigger</th>
+              <th>Upgrade</th>
+              <th>Added cost/mo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Client asks for higher throughput</td>
+              <td>Switch Ollama → vLLM, keep same box</td>
+              <td class="cost">$0</td>
+            </tr>
+            <tr>
+              <td>Client needs RAG over their docs</td>
+              <td>Add Qdrant or pgvector on same EC2</td>
+              <td class="cost">$0</td>
+            </tr>
+            <tr>
+              <td>You hit 5+ clients</td>
+              <td>One EC2 per client, Terraform to provision</td>
+              <td class="cost">+$60 per client</td>
+            </tr>
+            <tr>
+              <td>Client demands 99.9% SLA</td>
+              <td>Move off spot → on-demand, add standby</td>
+              <td class="cost">+$120</td>
+            </tr>
+            <tr>
+              <td>Client demands HIPAA / SOC 2</td>
+              <td>BAA with AWS, encryption + audit stack</td>
+              <td class="cost">+$50, +6mo work</td>
+            </tr>
+            <tr>
+              <td>Revenue &gt; $20k/mo</td>
+              <td>Hire ops person, automate provisioning</td>
+              <td class="cost">Salary</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section id="avoid">
+      <div class="section-header">
+        <span class="section-num">§ 10</span>
+        <h2>What to avoid (seriously)</h2>
+      </div>
+
+      <ul class="checklist">
+        <li class="bad"><strong>Kubernetes / EKS.</strong> $73/mo for the control plane alone, before a single pod runs. You do not need it until you have 20+ clients.</li>
+        <li class="bad"><strong>Multi-region.</strong> One region covers 99% of MVP clients. Multi-region is a $2k/mo problem solving a $0 need.</li>
+        <li class="bad"><strong>Hosting a 70B model on day one.</strong> Requires 2× A100s. Costs $3k+/mo. Nobody pays for "a bigger model" — they pay for "my data stays put."</li>
+        <li class="bad"><strong>Building your own admin dashboard early.</strong> Use Retool, Airtable, or a Notion page. Your time is the most expensive infra.</li>
+        <li class="bad"><strong>Pre-building compliance you don't need.</strong> SOC 2 costs $20k+ and 6 months. Do it when a contract specifically blocks on it, not before.</li>
+        <li class="bad"><strong>Free trials.</strong> They attract tire-kickers. Paid pilots filter for real buyers.</li>
+        <li class="bad"><strong>Buying a fancy domain before a customer.</strong> OrbitumAI on a $12 Namecheap domain closes deals. Prove the product, then splurge.</li>
+      </ul>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta">
+      <h2>Your next 72 hours</h2>
+      <p style="font-size:17px;">1. Launch the <code>g4dn.xlarge</code> and install Ollama.<br>
+      2. Record the 3-minute Loom demo.<br>
+      3. Send 30 cold emails.</p>
+      <p style="color:var(--ink-dim); margin-top:20px;">
+        If you can't do these three things this week, no architecture will save you. If you can, you'll have revenue before your first AWS bill clears.
+      </p>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>
