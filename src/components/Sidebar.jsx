@@ -29,22 +29,22 @@ export default function Sidebar({ activePanel, onNavigate }) {
       <nav className="nav-group">
         <div className="nav-label">Navigation</div>
         {navItems.map(({ id, icon, label }) => (
-          <div
+          <button
             key={id}
             className={`nav-item${activePanel === id ? ' active' : ''}`}
             onClick={() => onNavigate(id)}
           >
             <span className="icon">{icon}</span> {label}
-          </div>
+          </button>
         ))}
 
         <div className="nav-divider" />
-        <div
+        <button
           className={`nav-item${activePanel === 'linkedin' ? ' active' : ''}`}
           onClick={() => onNavigate('linkedin')}
         >
           <span className="icon">◈</span> LinkedIn Post
-        </div>
+        </button>
 
         <div className="nav-divider" />
         <div className="nav-label">Resources</div>

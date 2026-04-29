@@ -47,6 +47,9 @@ html, body { width:100%; height:100%; overflow:hidden; background:var(--orbit-bl
   transition:all .18s ease;
   user-select:none;
   text-decoration:none;
+  /* button reset */
+  background:none; border-top:none; border-right:none; border-bottom:none;
+  width:100%; text-align:left; outline:none;
 }
 .nav-item:hover { color:rgba(247,245,242,.75); background:rgba(247,245,242,.03); }
 .nav-item.active { color:var(--founder-white); border-left-color:var(--warm-ember); background:rgba(196,98,45,.07); }
