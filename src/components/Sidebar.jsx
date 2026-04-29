@@ -14,9 +14,10 @@ export default function Sidebar({ activePanel, onNavigate }) {
     { label: 'LLM Hosting',        href: '/Subhashish/LLM%20Hosting/orbitumai_guide.html' },
     { label: 'OpenClaw Setup',     href: '/Subhashish/OpenClaw_Setup/index.html' },
     { label: 'Training Guide',     href: '/Subhashish/Training%20Guide%20to%20Build%20App/train_build_app/index.html' },
+    { label: 'Claude Token Guide', href: '/Subhashish/Resources/index.html' },
   ]
 
-  const resourceIcons = ['☁', '⬡', '◎', '◫', '◐']
+  const resourceIcons = ['☁', '⬡', '◎', '◫', '◐', '◈']
 
   return (
     <aside className="sidebar">

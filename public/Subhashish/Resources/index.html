@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Commands & Token Optimization — Menu</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      --color-text-primary: #0f0f0f;
+      --color-text-secondary: #6b7280;
+      --color-border-tertiary: #e5e7eb;
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f9fafb;
+      --border-radius-lg: 10px;
+      --border-radius-md: 8px;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-background-secondary);
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 2.5rem 1rem;
+    }
+
+    .menu-wrap {
+      width: 100%;
+      max-width: 320px;
+    }
+
+    /* Header */
+    .menu-header {
+      margin-bottom: 1.75rem;
+    }
+    .menu-eyebrow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      margin-bottom: 0.4rem;
+    }
+    .menu-title {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+    .menu-sub {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Divider label */
+    .menu-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: var(--color-text-secondary);
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 0.5px solid var(--color-border-tertiary);
+    }
+
+    /* Nav groups */
+    .nav-group {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Nav items */
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-item {
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      padding: 11px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .nav-item:hover {
+      background: #f0fdf8;
+      border-color: #a7f3d7;
+    }
+    .nav-item.active {
+      background: #E1F5EE;
+      border-color: #6ee7c4;
+    }
+
+    .nav-badge {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      background: #E1F5EE;
+      color: #0F6E56;
+      border-radius: 6px;
+      padding: 3px 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      min-width: 72px;
+      text-align: center;
+    }
+    .nav-item.active .nav-badge {
+      background: #1D9E75;
+      color: #ffffff;
+    }
+
+    .nav-text {}
+    .nav-item-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin-bottom: 1px;
+    }
+    .nav-item-desc {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+
+    .nav-arrow {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      flex-shrink: 0;
+    }
+    .nav-item.active .nav-arrow {
+      color: #0F6E56;
+    }
+
+    /* Quick-command strip */
+    .quick-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 1.5rem;
+    }
+    .quick-chip {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      color: #0F6E56;
+      border-radius: 20px;
+      padding: 4px 12px;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+      white-space: nowrap;
+    }
+    .quick-chip:hover {
+      background: #E1F5EE;
+      border-color: #6ee7c4;
+    }
+
+    /* Callout */
+    .callout {
+      background: #E1F5EE;
+      border-radius: var(--border-radius-md);
+      padding: 11px 13px;
+      margin-bottom: 1.5rem;
+    }
+    .callout p {
+      font-size: 12px;
+      color: #085041;
+      line-height: 1.6;
+    }
+    .callout strong {
+      font-weight: 500;
+    }
+
+    /* Status row */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-lg);
+      margin-bottom: 1.5rem;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #1D9E75;
+      flex-shrink: 0;
+    }
+    .status-text {
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+    .status-text strong {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+
+    /* Pill */
+    .pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .pill-fast  { background: #EAF3DE; color: #3B6D11; }
+    .pill-bal   { background: #E1F5EE; color: #0F6E56; }
+    .pill-power { background: #EEEDFE; color: #3C3489; }
+  </style>
+</head>
+<body>
+<div class="menu-wrap">
+
+  <!-- Header -->
+  <div class="menu-header">
+    <p class="menu-eyebrow">Navigation — Claude.ai + Claude Code</p>
+    <h1 class="menu-title">Claude Commands & Token Optimization</h1>
+    <p class="menu-sub">Jump to any section of the guide.</p>
+  </div>
+
+  <!-- Status -->
+  <div class="status-row">
+    <div class="status-dot"></div>
+    <p class="status-text"><strong>Guide loaded.</strong> Select a section below to get started.</p>
+  </div>
+
+  <!-- Quick commands -->
+  <div class="nav-group">
+    <p class="menu-label">Quick Commands</p>
+    <div class="quick-strip">
+      <span class="quick-chip">/compact</span>
+      <span class="quick-chip">/clear</span>
+      <span class="quick-chip">/cost</span>
+      <span class="quick-chip">/model</span>
+      <span class="quick-chip">/effort</span>
+      <span class="quick-chip">/init</span>
+      <span class="quick-chip">/review</span>
+      <span class="quick-chip">/help</span>
+    </div>
+  </div>
+
+  <!-- Main sections -->
+  <div class="nav-group">
+    <p class="menu-label">Guide Sections</p>
+    <div class="nav-list">
+
+      <a class="nav-item active" href="#commands">
+        <div class="nav-badge">Commands</div>
+        <div class="nav-text">
+          <div class="nav-item-title">Slash Commands</div>
+          <div class="nav-item-desc">Session control, review, model switching</div>
+        </div>
+        <div class="nav-arrow">↗</div>
+      </a>
+
+      <a class="nav-item" href="#tokens">
+        <div class="nav-badge">Tokens</div>
+        <div class="nav-text">
+          <div class="nav-item-title">Token Tips</div>
+          <div class="nav-item-desc">Habits and cost breakdown by action</div>
+        </div>
+        <div class="nav-arrow">↗</div>
+      </a>
+
+      <a class="nav-item" href="#models">
+        <div class="nav-badge">Models</div>
+        <div class="nav-text">
+          <div class="nav-item-title">Model Guide</div>
+          <div class="nav-item-desc">Haiku vs Sonnet vs Opus — when to use each</div>
+        </div>
+        <div class="nav-arrow">↗</div>
+      </a>
+
+      <a class="nav-item" href="#prompts">
+        <div class="nav-badge">Prompts</div>
+        <div class="nav-text">
+          <div class="nav-item-title">Prompt Patterns</div>
+          <div class="nav-item-desc">Before/after examples that save tokens</div>
+        </div>
+        <div class="nav-arrow">↗</div>
+      </a>
+
+      <a class="nav-item" href="#links">
+        <div class="nav-badge">Resources</div>
+        <div class="nav-text">
+          <div class="nav-item-title">Links & Docs</div>
+          <div class="nav-item-desc">Official Anthropic docs and community references</div>
+        </div>
+        <div class="nav-arrow">↗</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- Model cost reference -->
+  <div class="nav-group">
+    <p class="menu-label">Model Cost at a Glance</p>
+    <div class="nav-list">
+
+      <div class="nav-item" style="cursor:default;">
+        <div class="nav-badge" style="font-family:var(--font-sans);font-size:12px;">Haiku 4.5</div>
+        <div class="nav-text">
+          <div class="nav-item-title">Drafts, rewrites, quick lookups</div>
+          <div class="nav-item-desc">Subagent tasks, formatting, classification</div>
+        </div>
+        <span class="pill pill-fast">Cheapest</span>
+      </div>
+
+      <div class="nav-item" style="cursor:default;">
+        <div class="nav-badge" style="font-family:var(--font-sans);font-size:12px;">Sonnet 4.6</div>
+        <div class="nav-text">
+          <div class="nav-item-title">Everyday work, coding, strategy</div>
+          <div class="nav-item-desc">Default for most agentic workflows</div>
+        </div>
+        <span class="pill pill-bal">Balanced</span>
+      </div>
+
+      <div class="nav-item" style="cursor:default;">
+        <div class="nav-badge" style="font-family:var(--font-sans);font-size:12px;">Opus 4.6</div>
+        <div class="nav-text">
+          <div class="nav-item-title">Complex reasoning, architecture</div>
+          <div class="nav-item-desc">Hard debugging, high-stakes decisions</div>
+        </div>
+        <span class="pill pill-power">Highest</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Callout -->
+  <div class="callout">
+    <p><strong>Golden rule:</strong> tokens burn in three places — what you send in, what Claude generates, and what loads from memory (CLAUDE.md, system prompts). Control all three.</p>
+  </div>
+
+</div>
+
+<script>
+  // Highlight active nav item on click
+  document.querySelectorAll('.nav-item[href]').forEach(item => {
+    item.addEventListener('click', function () {
+      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
