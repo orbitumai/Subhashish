@@ -3,364 +3,624 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Claude Commands & Token Optimization — Menu</title>
+  <title>Claude Commands & Token Optimization — OrbitumAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:ital,wght@0,600;0,700;0,800;1,400&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      --color-text-primary: #0f0f0f;
-      --color-text-secondary: #6b7280;
-      --color-border-tertiary: #e5e7eb;
-      --color-background-primary: #ffffff;
-      --color-background-secondary: #f9fafb;
-      --border-radius-lg: 10px;
-      --border-radius-md: 8px;
+      --orbit-black:   #0D0D0D;
+      --warm-ember:    #C4622D;
+      --strategy-gold: #D4A843;
+      --founder-white: #F7F5F2;
+      --f-display: 'Plus Jakarta Sans', sans-serif;
+      --f-body:    'Inter', sans-serif;
+      --f-accent:  'Playfair Display', serif;
+      --f-mono:    'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      --r-sm: 6px; --r-md: 12px; --r-lg: 20px;
     }
 
-    body {
-      font-family: var(--font-sans);
-      background: var(--color-background-secondary);
+    html, body {
+      background: var(--orbit-black);
+      font-family: var(--f-body);
+      color: var(--founder-white);
       min-height: 100vh;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding: 2.5rem 1rem;
     }
 
-    .menu-wrap {
-      width: 100%;
-      max-width: 320px;
+    .grid-texture {
+      position: fixed; inset: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(247,245,242,.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(247,245,242,.018) 1px, transparent 1px);
+      background-size: 52px 52px; z-index: 0;
     }
 
-    /* Header */
-    .menu-header {
-      margin-bottom: 1.75rem;
-    }
-    .menu-eyebrow {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--color-text-secondary);
-      margin-bottom: 0.4rem;
-    }
-    .menu-title {
-      font-size: 18px;
-      font-weight: 500;
-      color: var(--color-text-primary);
-      line-height: 1.3;
-      margin-bottom: 0.5rem;
-    }
-    .menu-sub {
-      font-size: 13px;
-      color: var(--color-text-secondary);
-      line-height: 1.55;
+    .page-wrap {
+      position: relative; z-index: 1;
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 52px 40px 80px;
     }
 
-    /* Divider label */
-    .menu-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-      color: var(--color-text-secondary);
-      margin-bottom: 8px;
-      padding-bottom: 6px;
-      border-bottom: 0.5px solid var(--color-border-tertiary);
+    /* ── BACK LINK ── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--f-display); font-size: 11px; font-weight: 700;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: rgba(247,245,242,.35); text-decoration: none;
+      margin-bottom: 36px; transition: color .15s;
     }
+    .back-link:hover { color: var(--warm-ember); }
 
-    /* Nav groups */
-    .nav-group {
-      margin-bottom: 1.5rem;
+    /* ── HERO ── */
+    .hero { margin-bottom: 36px; }
+    .hero-eyebrow {
+      font-family: var(--f-display); font-size: 10px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: var(--warm-ember); margin-bottom: 10px;
     }
-
-    /* Nav items */
-    .nav-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
+    .hero-title {
+      font-family: var(--f-display); font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800; line-height: 1.05; color: var(--founder-white);
+      letter-spacing: -1px; margin-bottom: 8px;
     }
-
-    .nav-item {
-      background: var(--color-background-primary);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--border-radius-lg);
-      padding: 11px 14px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.12s, border-color 0.12s;
-    }
-    .nav-item:hover {
-      background: #f0fdf8;
-      border-color: #a7f3d7;
-    }
-    .nav-item.active {
-      background: #E1F5EE;
-      border-color: #6ee7c4;
-    }
-
-    .nav-badge {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 500;
-      background: #E1F5EE;
-      color: #0F6E56;
-      border-radius: 6px;
-      padding: 3px 8px;
-      white-space: nowrap;
-      flex-shrink: 0;
-      min-width: 72px;
-      text-align: center;
-    }
-    .nav-item.active .nav-badge {
-      background: #1D9E75;
-      color: #ffffff;
-    }
-
-    .nav-text {}
-    .nav-item-title {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text-primary);
-      margin-bottom: 1px;
-    }
-    .nav-item-desc {
-      font-size: 12px;
-      color: var(--color-text-secondary);
-      line-height: 1.4;
-    }
-
-    .nav-arrow {
-      margin-left: auto;
-      font-size: 13px;
-      color: var(--color-text-secondary);
-      flex-shrink: 0;
-    }
-    .nav-item.active .nav-arrow {
-      color: #0F6E56;
-    }
-
-    /* Quick-command strip */
-    .quick-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 1.5rem;
-    }
-    .quick-chip {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 500;
-      background: var(--color-background-primary);
-      border: 0.5px solid var(--color-border-tertiary);
-      color: #0F6E56;
-      border-radius: 20px;
-      padding: 4px 12px;
-      cursor: pointer;
-      transition: background 0.12s, border-color 0.12s;
-      white-space: nowrap;
-    }
-    .quick-chip:hover {
-      background: #E1F5EE;
-      border-color: #6ee7c4;
-    }
-
-    /* Callout */
-    .callout {
-      background: #E1F5EE;
-      border-radius: var(--border-radius-md);
-      padding: 11px 13px;
-      margin-bottom: 1.5rem;
-    }
-    .callout p {
-      font-size: 12px;
-      color: #085041;
+    .hero-sub {
+      font-family: var(--f-accent); font-style: italic;
+      font-size: clamp(14px, 1.5vw, 17px); color: var(--strategy-gold);
       line-height: 1.6;
     }
-    .callout strong {
-      font-weight: 500;
+    .accent-line { width: 40px; height: 3px; background: var(--warm-ember); border-radius: 2px; margin: 20px 0 28px; }
+
+    /* ── CALLOUT ── */
+    .callout {
+      background: rgba(196,98,45,.07);
+      border-left: 3px solid var(--warm-ember);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      padding: 14px 18px; margin-bottom: 28px;
+    }
+    .callout p { font-family: var(--f-body); font-size: 13px; color: rgba(247,245,242,.7); line-height: 1.65; }
+    .callout strong { color: var(--founder-white); font-weight: 600; }
+
+    /* ── TAB BAR ── */
+    .tab-bar {
+      display: flex; flex-wrap: wrap; gap: 4px;
+      border-bottom: 1px solid rgba(247,245,242,.07);
+      margin-bottom: 28px;
+    }
+    .tab {
+      font-family: var(--f-display); font-size: 12px; font-weight: 700;
+      padding: 9px 16px; border: none; background: none;
+      color: rgba(247,245,242,.35); cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px;
+      border-radius: 4px 4px 0 0; transition: color .15s; letter-spacing: .3px;
+    }
+    .tab:hover { color: rgba(247,245,242,.65); }
+    .tab.active { color: var(--founder-white); border-bottom-color: var(--warm-ember); }
+
+    /* ── SECTIONS ── */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: var(--f-display); font-size: 9px; font-weight: 700;
+      letter-spacing: 2.5px; text-transform: uppercase;
+      color: rgba(247,245,242,.2); margin-bottom: 12px;
+      padding-bottom: 8px; border-bottom: 1px solid rgba(247,245,242,.06);
     }
 
-    /* Status row */
-    .status-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
-      background: var(--color-background-primary);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--border-radius-lg);
-      margin-bottom: 1.5rem;
+    /* ── CMD CARDS ── */
+    .cmd-grid { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+    .cmd-card {
+      background: rgba(247,245,242,.03);
+      border: 1px solid rgba(247,245,242,.08);
+      border-radius: var(--r-lg); padding: 16px 18px;
+      display: flex; gap: 14px; align-items: flex-start;
+      transition: border-color .18s;
     }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #1D9E75;
-      flex-shrink: 0;
+    .cmd-card:hover { border-color: rgba(196,98,45,.3); }
+    .cmd-badge {
+      font-family: var(--f-mono); font-size: 12px; font-weight: 600;
+      background: rgba(196,98,45,.15); color: var(--warm-ember);
+      border: 1px solid rgba(196,98,45,.3);
+      border-radius: var(--r-sm); padding: 4px 10px;
+      white-space: nowrap; flex-shrink: 0; min-width: 88px;
+      text-align: center; margin-top: 1px;
     }
-    .status-text {
-      font-size: 12px;
-      color: var(--color-text-secondary);
-      line-height: 1.4;
+    .cmd-title { font-family: var(--f-display); font-size: 14px; font-weight: 700; color: var(--founder-white); margin-bottom: 4px; }
+    .cmd-desc  { font-family: var(--f-body); font-size: 13px; color: rgba(247,245,242,.55); line-height: 1.6; }
+    .cmd-tip {
+      display: inline-block; margin-top: 7px;
+      font-family: var(--f-body); font-size: 11px;
+      color: var(--strategy-gold);
+      background: rgba(212,168,67,.1); border: 1px solid rgba(212,168,67,.2);
+      padding: 3px 9px; border-radius: 20px;
     }
-    .status-text strong {
-      color: var(--color-text-primary);
-      font-weight: 500;
+    code {
+      font-family: var(--f-mono); font-size: 12px;
+      background: rgba(247,245,242,.06); color: rgba(247,245,242,.75);
+      padding: 1px 5px; border-radius: 4px;
     }
 
-    /* Pill */
-    .pill {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 500;
-      padding: 2px 8px;
-      border-radius: 20px;
+    /* ── TIP CARDS ── */
+    .tip-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 28px; }
+    .tip-card {
+      background: rgba(247,245,242,.025);
+      border: 1px solid rgba(247,245,242,.07);
+      border-radius: var(--r-md); padding: 16px;
     }
-    .pill-fast  { background: #EAF3DE; color: #3B6D11; }
-    .pill-bal   { background: #E1F5EE; color: #0F6E56; }
-    .pill-power { background: #EEEDFE; color: #3C3489; }
+    .tip-icon  { font-size: 18px; margin-bottom: 8px; }
+    .tip-title { font-family: var(--f-display); font-size: 13px; font-weight: 700; color: var(--founder-white); margin-bottom: 5px; }
+    .tip-desc  { font-family: var(--f-body); font-size: 12px; color: rgba(247,245,242,.5); line-height: 1.6; }
+
+    /* ── TABLE ── */
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 28px; }
+    .data-table th {
+      font-family: var(--f-display); font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: rgba(247,245,242,.25); text-align: left;
+      padding: 10px 14px; border-bottom: 1px solid rgba(247,245,242,.07);
+    }
+    .data-table td {
+      padding: 12px 14px; border-bottom: 1px solid rgba(247,245,242,.05);
+      color: rgba(247,245,242,.65); vertical-align: top; line-height: 1.5;
+      font-family: var(--f-body);
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { color: var(--founder-white); font-weight: 500; }
+    .data-table tr:hover td { background: rgba(247,245,242,.02); }
+
+    /* ── PILLS ── */
+    .pill { display: inline-block; font-family: var(--f-display); font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 20px; letter-spacing: .5px; }
+    .pill-fast  { background: rgba(45,106,79,.2);  color: #6DCF8A; border: 1px solid rgba(45,106,79,.35); }
+    .pill-bal   { background: rgba(196,98,45,.15); color: var(--warm-ember); border: 1px solid rgba(196,98,45,.3); }
+    .pill-power { background: rgba(212,168,67,.12); color: var(--strategy-gold); border: 1px solid rgba(212,168,67,.25); }
+
+    /* ── PROMPT ITEMS ── */
+    .prompt-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+    .prompt-item {
+      background: rgba(247,245,242,.025);
+      border: 1px solid rgba(247,245,242,.08);
+      border-radius: var(--r-lg); padding: 18px 20px;
+    }
+    .prompt-context {
+      font-family: var(--f-display); font-size: 10px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: rgba(247,245,242,.25); margin-bottom: 10px;
+    }
+    .prompt-label {
+      font-family: var(--f-display); font-size: 9px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      color: rgba(247,245,242,.2); margin-bottom: 5px;
+    }
+    .prompt-bad {
+      font-family: var(--f-mono); font-size: 12px;
+      color: #F87171; background: rgba(248,113,113,.08);
+      border: 1px solid rgba(248,113,113,.15);
+      border-radius: var(--r-sm); padding: 10px 12px;
+      margin-bottom: 10px; line-height: 1.6;
+    }
+    .prompt-good {
+      font-family: var(--f-mono); font-size: 12px;
+      color: #6DCF8A; background: rgba(45,106,79,.1);
+      border: 1px solid rgba(45,106,79,.2);
+      border-radius: var(--r-sm); padding: 10px 12px;
+      line-height: 1.6;
+    }
+
+    /* ── LINK ITEMS ── */
+    .links-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 28px; }
+    .link-item {
+      background: rgba(247,245,242,.03);
+      border: 1px solid rgba(247,245,242,.08);
+      border-radius: var(--r-lg); padding: 14px 18px;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; text-decoration: none;
+      transition: background .12s, border-color .15s;
+    }
+    .link-item:hover { background: rgba(196,98,45,.07); border-color: rgba(196,98,45,.3); }
+    .link-title { font-family: var(--f-display); font-size: 14px; font-weight: 700; color: var(--founder-white); margin-bottom: 3px; }
+    .link-desc  { font-family: var(--f-body); font-size: 12px; color: rgba(247,245,242,.45); }
+    .link-arrow { color: rgba(247,245,242,.3); font-size: 14px; flex-shrink: 0; }
+    .link-item:hover .link-arrow { color: var(--warm-ember); }
+
+    @media (max-width: 600px) {
+      .page-wrap { padding: 32px 20px 60px; }
+      .tab { font-size: 11px; padding: 8px 10px; }
+    }
   </style>
 </head>
 <body>
-<div class="menu-wrap">
+<div class="grid-texture"></div>
+<div class="page-wrap">
 
-  <!-- Header -->
-  <div class="menu-header">
-    <p class="menu-eyebrow">Navigation — Claude.ai + Claude Code</p>
-    <h1 class="menu-title">Claude Commands & Token Optimization</h1>
-    <p class="menu-sub">Jump to any section of the guide.</p>
+  <a class="back-link" href="javascript:history.back()">← Back</a>
+
+  <!-- Hero -->
+  <div class="hero">
+    <p class="hero-eyebrow">Educational Guide — Claude.ai + Claude Code</p>
+    <h1 class="hero-title">Claude Commands &amp; Token Optimization</h1>
+    <p class="hero-sub">Everything you need to use Claude efficiently — slash commands, model selection, prompt patterns, and resources — in one place.</p>
+  </div>
+  <div class="accent-line"></div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="switchTab('commands', this)">Slash Commands</button>
+    <button class="tab" onclick="switchTab('tokens', this)">Token Tips</button>
+    <button class="tab" onclick="switchTab('models', this)">Model Guide</button>
+    <button class="tab" onclick="switchTab('prompts', this)">Prompt Patterns</button>
+    <button class="tab" onclick="switchTab('links', this)">Resources</button>
   </div>
 
-  <!-- Status -->
-  <div class="status-row">
-    <div class="status-dot"></div>
-    <p class="status-text"><strong>Guide loaded.</strong> Select a section below to get started.</p>
-  </div>
+  <!-- ══ SLASH COMMANDS ══════════════════════════════════════════ -->
+  <div id="commands" class="section active">
+    <div class="callout">
+      <p><strong>What are slash commands?</strong> Type these directly in Claude Code or the Claude.ai interface. They give you precise control over sessions, context, and token usage without writing extra prompts.</p>
+    </div>
 
-  <!-- Quick commands -->
-  <div class="nav-group">
-    <p class="menu-label">Quick Commands</p>
-    <div class="quick-strip">
-      <span class="quick-chip">/compact</span>
-      <span class="quick-chip">/clear</span>
-      <span class="quick-chip">/cost</span>
-      <span class="quick-chip">/model</span>
-      <span class="quick-chip">/effort</span>
-      <span class="quick-chip">/init</span>
-      <span class="quick-chip">/review</span>
-      <span class="quick-chip">/help</span>
+    <p class="section-label">Session Control</p>
+    <div class="cmd-grid">
+      <div class="cmd-card">
+        <div class="cmd-badge">/compact</div>
+        <div>
+          <div class="cmd-title">Compress conversation history</div>
+          <div class="cmd-desc">Summarizes older messages while keeping important context. Frees up context window space mid-session without losing your thread.</div>
+          <span class="cmd-tip">Use every 20–30 min in long sessions</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-badge">/clear</div>
+        <div>
+          <div class="cmd-title">Wipe context, start fresh</div>
+          <div class="cmd-desc">Clears the entire conversation history. Best used when switching to a completely new task — prevents context drift.</div>
+          <span class="cmd-tip">Most underused command by beginners</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-badge">/cost</div>
+        <div>
+          <div class="cmd-title">Show token usage</div>
+          <div class="cmd-desc">Displays input tokens, output tokens, and estimated cost for the current session. Helps you track where tokens are going.</div>
+          <span class="cmd-tip">API users: check /cost often. Subscribers: use claude.ai → Settings → Usage</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Content &amp; Review</p>
+    <div class="cmd-grid">
+      <div class="cmd-card">
+        <div class="cmd-badge">/review</div>
+        <div>
+          <div class="cmd-title">Targeted code review</div>
+          <div class="cmd-desc">Requests a structured review of recent changes. More reliable than asking "review my code" freeform — produces consistent, actionable output.</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-badge">/init</div>
+        <div>
+          <div class="cmd-title">Initialize project memory</div>
+          <div class="cmd-desc">Creates a CLAUDE.md file for your project. This file loads before every session — keep it lean (under 500 tokens) or it costs you every single turn.</div>
+          <span class="cmd-tip">Run this first in every new project</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-badge">/copy</div>
+        <div>
+          <div class="cmd-title">Copy assistant response</div>
+          <div class="cmd-desc">Copies the latest response to clipboard. Use <code>/copy N</code> to copy the Nth-latest assistant response.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Model &amp; Configuration</p>
+    <div class="cmd-grid">
+      <div class="cmd-card">
+        <div class="cmd-badge">/model</div>
+        <div>
+          <div class="cmd-title">Switch models mid-session</div>
+          <div class="cmd-desc">Change the active Claude model without starting a new session. Drop to Haiku for simple tasks, escalate to Opus for complex reasoning.</div>
+          <span class="cmd-tip">Biggest token lever available</span>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-badge">/effort</div>
+        <div>
+          <div class="cmd-title">Set thinking depth</div>
+          <div class="cmd-desc">Controls extended thinking budget. Levels: low → medium → high → xhigh (Opus 4.7 only). Lower effort = fewer thinking tokens consumed.</div>
+        </div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-badge">/help</div>
+        <div>
+          <div class="cmd-title">List all available commands</div>
+          <div class="cmd-desc">Shows every slash command available in your current session, including any custom commands you've created.</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="section-label">Custom Commands (Claude Code)</p>
+    <div class="cmd-grid">
+      <div class="cmd-card">
+        <div class="cmd-badge">.claude/</div>
+        <div>
+          <div class="cmd-title">Create your own slash commands</div>
+          <div class="cmd-desc">Save Markdown files in <code>.claude/commands/</code> (project) or <code>~/.claude/commands/</code> (global). The filename becomes the command name. These are reusable prompt shortcuts — ideal for no-code builders.</div>
+          <span class="cmd-tip">Example: /orbit, /review-copy, /pitch-check</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Main sections -->
-  <div class="nav-group">
-    <p class="menu-label">Guide Sections</p>
-    <div class="nav-list">
+  <!-- ══ TOKEN TIPS ═══════════════════════════════════════════════ -->
+  <div id="tokens" class="section">
+    <div class="callout">
+      <p><strong>The golden rule:</strong> tokens burn in three places — what you send in, what Claude generates, and what's loaded from memory (CLAUDE.md, system prompts). Control all three.</p>
+    </div>
 
-      <a class="nav-item active" href="#commands">
-        <div class="nav-badge">Commands</div>
-        <div class="nav-text">
-          <div class="nav-item-title">Slash Commands</div>
-          <div class="nav-item-desc">Session control, review, model switching</div>
+    <p class="section-label">Top Habits</p>
+    <div class="tip-grid">
+      <div class="tip-card">
+        <div class="tip-icon">↗</div>
+        <div class="tip-title">Plan in Chat, build once</div>
+        <div class="tip-desc">Explore ideas in chat before creating artifacts (docs, spreadsheets, slides). Artifact generation costs significantly more tokens.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">@</div>
+        <div class="tip-title">Use @file, not paste</div>
+        <div class="tip-desc">Reference files with @filename instead of pasting their content. Claude tokenizes file mentions more efficiently than inline text dumps.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">◻</div>
+        <div class="tip-title">One task per session</div>
+        <div class="tip-desc">Start a fresh session for each new task. Mixing unrelated work in one session accumulates context that slows and costs more over time.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">⬡</div>
+        <div class="tip-title">Compact before big tasks</div>
+        <div class="tip-desc">Run /compact before starting a long or complex task in an existing session. Buys you more clean context window space.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">⚡</div>
+        <div class="tip-title">Match model to difficulty</div>
+        <div class="tip-desc">Use Haiku for drafts, rewrites, and simple questions. Save Opus for architecture, debugging, and multi-step planning. Most tasks don't need Opus.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">◈</div>
+        <div class="tip-title">Keep CLAUDE.md lean</div>
+        <div class="tip-desc">Your CLAUDE.md loads before every single session. A 5,000-token CLAUDE.md costs 5,000 tokens before you've typed a word. Trim it ruthlessly.</div>
+      </div>
+    </div>
+
+    <p class="section-label">Token Cost by Action (Relative)</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Token Cost</th>
+          <th>Tip</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Chat message (short)</td>
+          <td><span class="pill pill-fast">Very low</span></td>
+          <td>Default for exploration</td>
+        </tr>
+        <tr>
+          <td>@file reference</td>
+          <td><span class="pill pill-fast">Low</span></td>
+          <td>Always prefer over pasting</td>
+        </tr>
+        <tr>
+          <td>Code generation</td>
+          <td><span class="pill pill-bal">Medium</span></td>
+          <td>Specify exactly what you need</td>
+        </tr>
+        <tr>
+          <td>Creating artifacts (docs/slides)</td>
+          <td><span class="pill pill-bal">Medium-high</span></td>
+          <td>Plan in chat first</td>
+        </tr>
+        <tr>
+          <td>Extended thinking (high/xhigh)</td>
+          <td><span class="pill pill-power">High</span></td>
+          <td>Use /effort low for most tasks</td>
+        </tr>
+        <tr>
+          <td>Image generation</td>
+          <td><span class="pill pill-power">High</span></td>
+          <td>Only when you have a clear final vision</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ MODEL GUIDE ═══════════════════════════════════════════════ -->
+  <div id="models" class="section">
+    <div class="callout">
+      <p><strong>Model choice is the single biggest token lever.</strong> Haiku costs a fraction of Opus. For most no-code workflows, Sonnet 4.6 is the right default — only escalate to Opus for genuinely complex reasoning.</p>
+    </div>
+
+    <p class="section-label">Current Models (April 2026)</p>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Best For</th>
+          <th>Token Cost</th>
+          <th>When to Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Claude Haiku 4.5</td>
+          <td>Simple tasks, drafts, classification</td>
+          <td><span class="pill pill-fast">Cheapest</span></td>
+          <td>Rewrites, formatting, quick lookups, subagents</td>
+        </tr>
+        <tr>
+          <td>Claude Sonnet 4.6</td>
+          <td>Everyday work, agentic tasks</td>
+          <td><span class="pill pill-bal">Balanced</span></td>
+          <td>Default for most workflows — coding, copy, strategy</td>
+        </tr>
+        <tr>
+          <td>Claude Opus 4.6/4.7</td>
+          <td>Complex reasoning, architecture</td>
+          <td><span class="pill pill-power">Highest</span></td>
+          <td>Multi-step planning, hard debugging, high-stakes decisions</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="section-label">How to Switch</p>
+    <div class="cmd-grid">
+      <div class="cmd-card">
+        <div class="cmd-badge">/model</div>
+        <div>
+          <div class="cmd-title">Switch mid-session in Claude Code</div>
+          <div class="cmd-desc">Type /model and select from the picker. Applies immediately to the current session without losing history.</div>
         </div>
-        <div class="nav-arrow">↗</div>
-      </a>
-
-      <a class="nav-item" href="#tokens">
-        <div class="nav-badge">Tokens</div>
-        <div class="nav-text">
-          <div class="nav-item-title">Token Tips</div>
-          <div class="nav-item-desc">Habits and cost breakdown by action</div>
+      </div>
+      <div class="cmd-card">
+        <div class="cmd-badge">claude.ai</div>
+        <div>
+          <div class="cmd-title">Model selector in chat UI</div>
+          <div class="cmd-desc">On claude.ai, use the model dropdown at the top of any conversation. Change per-conversation or set a default in Settings.</div>
         </div>
-        <div class="nav-arrow">↗</div>
-      </a>
-
-      <a class="nav-item" href="#models">
-        <div class="nav-badge">Models</div>
-        <div class="nav-text">
-          <div class="nav-item-title">Model Guide</div>
-          <div class="nav-item-desc">Haiku vs Sonnet vs Opus — when to use each</div>
-        </div>
-        <div class="nav-arrow">↗</div>
-      </a>
-
-      <a class="nav-item" href="#prompts">
-        <div class="nav-badge">Prompts</div>
-        <div class="nav-text">
-          <div class="nav-item-title">Prompt Patterns</div>
-          <div class="nav-item-desc">Before/after examples that save tokens</div>
-        </div>
-        <div class="nav-arrow">↗</div>
-      </a>
-
-      <a class="nav-item" href="#links">
-        <div class="nav-badge">Resources</div>
-        <div class="nav-text">
-          <div class="nav-item-title">Links & Docs</div>
-          <div class="nav-item-desc">Official Anthropic docs and community references</div>
-        </div>
-        <div class="nav-arrow">↗</div>
-      </a>
-
+      </div>
     </div>
   </div>
 
-  <!-- Model cost reference -->
-  <div class="nav-group">
-    <p class="menu-label">Model Cost at a Glance</p>
-    <div class="nav-list">
+  <!-- ══ PROMPT PATTERNS ══════════════════════════════════════════ -->
+  <div id="prompts" class="section">
+    <div class="callout">
+      <p><strong>As a no-code builder,</strong> your prompt is your code. Precise prompts reduce back-and-forth, which means fewer total tokens spent reaching the same result.</p>
+    </div>
 
-      <div class="nav-item" style="cursor:default;">
-        <div class="nav-badge" style="font-family:var(--font-sans);font-size:12px;">Haiku 4.5</div>
-        <div class="nav-text">
-          <div class="nav-item-title">Drafts, rewrites, quick lookups</div>
-          <div class="nav-item-desc">Subagent tasks, formatting, classification</div>
-        </div>
-        <span class="pill pill-fast">Cheapest</span>
+    <p class="section-label">Before and After Examples</p>
+    <div class="prompt-list">
+      <div class="prompt-item">
+        <div class="prompt-context">Context — writing a landing page</div>
+        <div class="prompt-label">Vague (costs more rounds)</div>
+        <div class="prompt-bad">Write a landing page for my product.</div>
+        <div class="prompt-label" style="margin-top:10px;">Precise (one-shot result)</div>
+        <div class="prompt-good">Write a 3-section landing page for AILeadCalling, a voice AI tool for SMB outreach. Hero: hook + CTA. Section 2: 3 pain points with solutions. Section 3: social proof placeholder. Tone: confident, no hype. Output HTML.</div>
       </div>
-
-      <div class="nav-item" style="cursor:default;">
-        <div class="nav-badge" style="font-family:var(--font-sans);font-size:12px;">Sonnet 4.6</div>
-        <div class="nav-text">
-          <div class="nav-item-title">Everyday work, coding, strategy</div>
-          <div class="nav-item-desc">Default for most agentic workflows</div>
-        </div>
-        <span class="pill pill-bal">Balanced</span>
+      <div class="prompt-item">
+        <div class="prompt-context">Context — debugging an n8n workflow</div>
+        <div class="prompt-label">Vague</div>
+        <div class="prompt-bad">My workflow isn't working, can you help?</div>
+        <div class="prompt-label" style="margin-top:10px;">Precise</div>
+        <div class="prompt-good">My n8n HTTP Request node is returning a 401. The endpoint is POST https://api.example.com/leads. I'm passing Bearer token in the header. Here's the node config: [paste]. What's wrong?</div>
       </div>
-
-      <div class="nav-item" style="cursor:default;">
-        <div class="nav-badge" style="font-family:var(--font-sans);font-size:12px;">Opus 4.6</div>
-        <div class="nav-text">
-          <div class="nav-item-title">Complex reasoning, architecture</div>
-          <div class="nav-item-desc">Hard debugging, high-stakes decisions</div>
-        </div>
-        <span class="pill pill-power">Highest</span>
+      <div class="prompt-item">
+        <div class="prompt-context">Context — generating content</div>
+        <div class="prompt-label">Vague</div>
+        <div class="prompt-bad">Write me a LinkedIn post about AI.</div>
+        <div class="prompt-label" style="margin-top:10px;">Precise</div>
+        <div class="prompt-good">Write a LinkedIn post (150 words) from the POV of an AI founder who left Fortune 500 to build no-code AI tools. Hook: a counterintuitive insight about prompting. End with a question. Voice: direct, no buzzwords.</div>
       </div>
+    </div>
 
+    <p class="section-label">Prompt Structure That Saves Tokens</p>
+    <div class="tip-grid">
+      <div class="tip-card">
+        <div class="tip-title">State the output format upfront</div>
+        <div class="tip-desc">Tell Claude exactly what you want: "Output a JSON object", "Return only the HTML, no explanation". Prevents verbose preamble.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-title">Set constraints explicitly</div>
+        <div class="tip-desc">Word count, tone, structure, what to exclude. "No bullet points", "under 200 words", "skip the intro". Reduces iteration rounds.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-title">Include a negative example</div>
+        <div class="tip-desc">Tell Claude what NOT to do. "Don't use corporate jargon", "Don't repeat the brief back to me". Saves a correction round.</div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-title">Ask for one thing at a time</div>
+        <div class="tip-desc">Multi-part requests confuse priority. Break complex tasks into sequential prompts — each cheaper and more accurate than one giant request.</div>
+      </div>
     </div>
   </div>
 
-  <!-- Callout -->
-  <div class="callout">
-    <p><strong>Golden rule:</strong> tokens burn in three places — what you send in, what Claude generates, and what loads from memory (CLAUDE.md, system prompts). Control all three.</p>
+  <!-- ══ RESOURCES ════════════════════════════════════════════════ -->
+  <div id="links" class="section">
+    <div class="callout">
+      <p><strong>All links open in your browser.</strong> The official Anthropic docs are the ground truth — everything else is community commentary on top of them.</p>
+    </div>
+
+    <p class="section-label">Official Anthropic</p>
+    <div class="links-list">
+      <a class="link-item" href="https://docs.claude.com" target="_blank" rel="noopener noreferrer">
+        <div>
+          <div class="link-title">docs.claude.com</div>
+          <div class="link-desc">Official API docs, prompt engineering guide, model reference</div>
+        </div>
+        <div class="link-arrow">↗</div>
+      </a>
+      <a class="link-item" href="https://support.claude.com" target="_blank" rel="noopener noreferrer">
+        <div>
+          <div class="link-title">support.claude.com</div>
+          <div class="link-desc">Claude.ai plans, features, limits, and how-tos</div>
+        </div>
+        <div class="link-arrow">↗</div>
+      </a>
+      <a class="link-item" href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener noreferrer">
+        <div>
+          <div class="link-title">Prompt Engineering Guide</div>
+          <div class="link-desc">Anthropic's official guide to writing effective prompts</div>
+        </div>
+        <div class="link-arrow">↗</div>
+      </a>
+    </div>
+
+    <p class="section-label">Community Cheat Sheets</p>
+    <div class="links-list">
+      <a class="link-item" href="https://www.claudedirectory.org/blog/claude-code-cheat-sheet" target="_blank" rel="noopener noreferrer">
+        <div>
+          <div class="link-title">Claude Code Cheat Sheet 2026</div>
+          <div class="link-desc">Every command, shortcut, and flag — Ctrl+F searchable, updated weekly</div>
+        </div>
+        <div class="link-arrow">↗</div>
+      </a>
+      <a class="link-item" href="https://learn-prompting.fr/blog/claude-code-slash-commands-reference" target="_blank" rel="noopener noreferrer">
+        <div>
+          <div class="link-title">Slash Commands Reference (April 2026)</div>
+          <div class="link-desc">Full command list with real usage patterns from the community</div>
+        </div>
+        <div class="link-arrow">↗</div>
+      </a>
+      <a class="link-item" href="https://buildtolaunch.substack.com/p/claude-code-token-optimization" target="_blank" rel="noopener noreferrer">
+        <div>
+          <div class="link-title">Token Optimization: Full System Guide</div>
+          <div class="link-desc">19 specific changes to reduce token usage across setup and session habits</div>
+        </div>
+        <div class="link-arrow">↗</div>
+      </a>
+      <a class="link-item" href="https://github.com/hesreallyhim/awesome-claude-code" target="_blank" rel="noopener noreferrer">
+        <div>
+          <div class="link-title">Awesome Claude Code (GitHub)</div>
+          <div class="link-desc">Curated library of custom commands, skills, hooks, and agent patterns</div>
+        </div>
+        <div class="link-arrow">↗</div>
+      </a>
+    </div>
   </div>
 
 </div>
 
 <script>
-  // Highlight active nav item on click
-  document.querySelectorAll('.nav-item[href]').forEach(item => {
-    item.addEventListener('click', function () {
-      document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-      this.classList.add('active');
-    });
-  });
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 </script>
 </body>
 </html>
